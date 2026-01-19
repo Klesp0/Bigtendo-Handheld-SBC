@@ -18,11 +18,22 @@ The Bigtendo is built around a powerful SBC core with custom-programmed input lo
 
 
 ## 📂 Repository Structure
-* `/3D-Models`: `.STL` and `.STEP` files for the console shell.
-* `/Firmware`: Python-based HID firmware for the RP2040 controller.
-* `/Games`: Original titles developed in **Pygame** and **Godot**.
-* `/Media`: Build photos and system screenshots.
-* `/Docs`: Full schematics and pin mapping.
+
+### [Design](./Design)
+* **3D Models**
+* **Assets**
+    * Game icons: `assets/images/icons/`
+    * Sprites: `assets/images/sprites/`
+
+### [Firmware](./Firmware)
+* **RP2040 Logic:** Python-based HID firmware for the controller interface.
+
+### [Software](./Games)
+* **Games:** Original titles developed in Pygame and Godot.
+
+### Documentation & Media
+* **[Docs](./Docs):** Full schematics and pin mapping.
+* **[Media](./Media):** Build photos and system screenshots.
 
 ## 🚀 Software & Games
 The system runs on **RetroPie** with custom optimizations for the Pi 5. We've also included several original games:
