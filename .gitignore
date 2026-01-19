@@ -205,3 +205,21 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+
+
+# ==========================================
+# C++ / Arduino / RP2040 Build Files
+# ==========================================
+*.o
+*.obj
+*.exe
+*.elf
+*.bin
+*.hex
+*.uf2
+build/
+bin/
+Makefile
+cmake_install.cmake
+CMakeCache.txt
+CMakeFiles/
