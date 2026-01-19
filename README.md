@@ -21,9 +21,14 @@ The Bigtendo is built around a powerful SBC core with custom-programmed input lo
 
 ### [Design](./Design)
 * **3D Models**
+    * Finished Console Shell: Design/3D_Models/Bigtendo_Final_Case.stl
+    * Assembly Source: Design/3D_Models/Bigtendo_Main_Project.f3d (Fusion 360)
+    * Component Reference: Design/3D_Models/Hardware_References/ (Joystick, Raspberry 5, and internal mounts)
 * **Assets**
-    * Game icons: `assets/images/icons/`
-    * Sprites: `assets/images/sprites/`
+    * Game icons: `Design/Assets/images/icons/`
+    * Backgrounds: `Design/Assets/images/backgrounds/`
+    * Sprites: `Design/Assets/images/sprites/`
+    * Sounds: `Design/Assets/sounds/`
 
 ### [Firmware](./Firmware)
 * **RP2040 Logic:** Python-based HID firmware for the controller interface.
