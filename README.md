@@ -33,7 +33,7 @@ The Bigtendo is built around a powerful SBC core with custom-programmed input lo
 ### [Firmware](./Firmware)
 * **RP2040 Logic:** Python-based HID firmware for the controller interface.
 
-### [Software](./Games)
+### [Games](./Games)
 * **Games:** Original titles developed in Pygame and Godot.
 
 ### Documentation & Media
