@@ -24,10 +24,8 @@ Connectivity: Boot the system and connect to Wi-Fi.
 >If you encounter errors while updating or downloading files from GitHub, connect via Ethernet for a more stable connection.
 
 RetroPie Installation: Open the terminal and follow the Subtronics installation scripts for the X1201.
-![Description](/Media/images/chuck.jpg)
 
 Emulation Layer: To run RetroPie on top of Raspberry Pi OS, follow this  guide starting at [03:40]:
-
 [![Watch the video](https://img.youtube.com/vi/AaseHnf0k2o/0.jpg)](https://www.youtube.com/watch?v=AaseHnf0k2o)
 
 🕹 Phase 3: Controller Firmware & Wiring
@@ -42,4 +40,5 @@ Unplug the Feather and begin soldering the cables for the 20 tactile buttons and
 Refer to the Wiring Guide for the specific pinout.
 
 Solder the buttons to the perfboard exactly as shown in the Wiring Diagram.
-[diagram](/Docs/wiring_diagram)
+
+[diagram](/Docs/wiring_guide)
