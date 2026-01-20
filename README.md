@@ -14,8 +14,8 @@ The Bigtendo is built around a powerful SBC core with custom-programmed input lo
 * **Inputs:** 2x Analog Joysticks, 20x Physical Tactile Buttons
 * **Audio:** I2S DAC + Audio Amplifier + 2x 2W Internal Speakers
 * **Enclosure:** Custom 3D printed multi-part shell
-
-
+> [!TIP]
+> **Project Roadmap:** We are currently designing a custom PCB to replace the breadboard/perfboard wiring. This will integrate the audio DAC, amplifier, and controller logic into a single board—significantly reducing the build cost, size, and assembly complexity while making the internal cable management much cleaner.
 
 ## 📂 Repository Structure
 
@@ -51,13 +51,12 @@ The system runs on **RetroPie** with custom optimizations for the Pi 5. We've al
 ## 🔧 How to Build
 Detailed assembly instructions, 3D printing settings, and the Hardware can be found in our dedicated guide:
 
-👉 **[Read the Step-by-Step Build Guide here!](./BUILD.md)**
+👉 **[Read the Step-by-Step Build Guide here!](./Gudie/BUILD.md)**
 
 ## 📜 License
 This project is licensed under the **GNU General Public License v3.0**. See the [LICENSE](LICENSE) file for details.
 
 ---
-🤝 Project Partners
 ### 🤝 Project Partners
 * [@Klesp0](https://github.com/Klesp0) – **Lead Hardware Engineer & CAD Designer:**  Responsible for the hardware system architecture, component integration, power management, and final assembly. Co-designed the 3D console enclosure.
 * [@lukas513](https://github.com/lukas513) – **Software Engineer & CAD Designer:**  Developed original games in Pygame and Godot and co-designed the 3D console enclosure and mechanical fitment.
