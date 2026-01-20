@@ -1,78 +1,45 @@
-\# 🛠 Bigtendo Assembly Guide
+🛠 Bigtendo Assembly Guide
+This guide covers the initial hardware setup, operating system installation, and firmware configuration for the Bigtendo handheld.
 
+🔌 Phase 1: Core Hardware Assembly
+UPS Mounting: Secure the Subtronics X1201 UPS Shield directly onto the Raspberry Pi 5 GPIO pins.
 
+Cooling: Install the official Raspberry Pi Active Cooler. Ensure the heatsink and fan have enough clearance under the UPS shield.
 
-This document provides the step-by-step instructions for assembling the Bigtendo handheld SBC console.
+Power: Connect your Li-ion batteries to the UPS shield.
 
+>[!WARNING] 
+>Double-check battery polarity before connecting. Reversed polarity can permanently damage the Pi and the shield.
 
+Display: Mount the 7-inch display into the front frame of your shell and connect the DSI ribbon cable to the Pi 5.
 
-> \[!IMPORTANT]
+💾 Phase 2: OS & Emulation Setup
+Imaging: Download the Raspberry Pi Imager and flash Raspberry Pi OS (64-bit) onto your microSD card.
 
-> \*\*Safety First:\*\* Always disconnect the Li-ion batteries from the Subtronics X1201 UPS Shield before soldering or moving internal components to prevent short circuits.
+Initial Boot: Insert the card, connect your monitor, and plug the USB-C power cable into the UPS shield connector (not the Pi 5's USB-C port).
 
+Connectivity: Boot the system and connect to Wi-Fi.
 
+>[!TIP] 
+>If you encounter errors while updating or downloading files from GitHub, connect via Ethernet for a more stable connection.
 
----
+RetroPie Installation: Open the terminal and follow the Subtronics installation scripts for the X1201.
 
+Emulation Layer: To run RetroPie on top of Raspberry Pi OS, follow this guide starting at [03:40]:
 
+Video Guide: RetroPie on Raspberry Pi 5
 
-\## 🔌 Hardware Setup
+🕹 Phase 3: Controller Firmware & Wiring
+Prepare the Feather: Plug your Adafruit Feather RP2040 into your PC.
 
+CircuitPython: Download the latest UF2 file and drop it onto the RPI-RP2 drive. The board will reboot as CIRCUITPY.
 
+Upload Firmware: Copy the entire contents of our Firmware folder onto the CIRCUITPY drive.
 
-\### 1. Power \& Computing
+Soldering & Controls:
 
-\* \*\*UPS Mounting:\*\* Secure the \*\*Subtronics X1201 UPS Shield\*\* onto the Raspberry Pi 5.
+Unplug the Feather and begin soldering the cables for the 20 tactile buttons and 2 joysticks.
 
-\* \*\*Power Source:\*\* Connect your Li-ion batteries to the UPS shield. Double-check the polarity to avoid damaging the Pi.
+Refer to the Wiring Guide for the specific pinout.
 
-\* \*\*Cooling:\*\* Ensure the Pi 5's active cooler or heatsink has enough clearance under the UPS shield.
-
-
-
-\### 2. Display Assembly
-
-\* \*\*Screen:\*\* Mount the \*\*7-inch display\*\* into the front frame of your 3D-printed shell.
-
-\* \*\*Connection:\*\* Use the DSI ribbon cable to connect the display directly to the Pi 5's dedicated display port.
-
-
-
----
-
-
-
-\## 🕹 Input \& Control Logic
-
-
-
-\### 3. RP2040 Controller Interface
-
-\* \*\*Wiring:\*\* Connect the \*\*20 tactile buttons\*\* and \*\*2 joysticks\*\* to the Adafruit Feather RP2040.
-
-\* \*\*Communication:\*\* Plug the RP2040 into one of the Pi 5's USB ports. This allows the RP2040 to act as a "Plug-and-Play" controller (USB-HID).
-
-
-
-> \[!TIP]
-
-> \*\*Custom PCB Roadmap:\*\* We are currently designing a custom PCB to replace the breadboard wiring. This will integrate the audio DAC and controller logic, making this assembly step much simpler and more compact.
-
-
-
----
-
-
-
-\## 🔊 Audio Output
-
-
-
-\### 4. Sound System
-
-\* \*\*DAC \& Amp:\*\* Wire the I2S DAC to the Raspberry Pi 5's GPIO pins.
-
-\* \*\*Speakers:\*\* Connect the two 2W internal speakers to the amplifier output.
-
-\* \*\*Placement:\*\* Secure the speakers into the designated cutouts in the 3D-printed shell.
-
+Solder the buttons to the perfboard exactly as shown in the Wiring Diagram.
