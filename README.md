@@ -51,13 +51,12 @@ The system runs on **RetroPie** with custom optimizations for the Pi 5. We've al
 ## 🔧 How to Build
 Detailed assembly instructions, 3D printing settings, and the Hardware can be found in our dedicated guide:
 
-👉 **[Read the Step-by-Step Build Guide here!](./BUILD.md)**
+👉 **[Read the Step-by-Step Build Guide here!](./Gudie/BUILD.md)**
 
 ## 📜 License
 This project is licensed under the **GNU General Public License v3.0**. See the [LICENSE](LICENSE) file for details.
 
 ---
-🤝 Project Partners
 ### 🤝 Project Partners
 * [@Klesp0](https://github.com/Klesp0) – **Lead Hardware Engineer & CAD Designer:**  Responsible for the hardware system architecture, component integration, power management, and final assembly. Co-designed the 3D console enclosure.
 * [@lukas513](https://github.com/lukas513) – **Software Engineer & CAD Designer:**  Developed original games in Pygame and Godot and co-designed the 3D console enclosure and mechanical fitment.
