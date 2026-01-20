@@ -37,7 +37,7 @@ The Bigtendo is built around a powerful SBC core with custom-programmed input lo
 * **Games:** Original titles developed in Pygame and Godot.
 
 ### Documentation & Media
-* **[Docs](./Docs):** Full schematics and pin mapping.
+* **[Docs](./Docs):** Full schematics, pin mapping and guide.
 * **[Media](./Media):** Build photos and system screenshots.
 
 ## 🚀 Software & Games
@@ -51,7 +51,7 @@ The system runs on **RetroPie** with custom optimizations for the Pi 5. We've al
 ## 🔧 How to Build
 Detailed assembly instructions, 3D printing settings, and the Hardware can be found in our dedicated guide:
 
-👉 **[Read the Step-by-Step Build Guide here!](./Guide/BUILD.md)**
+👉 **[Read the Step-by-Step Build Guide here!](./Documents)**
 
 ## 📜 License
 This project is licensed under the **GNU General Public License v3.0**. See the [LICENSE](LICENSE) file for details.
