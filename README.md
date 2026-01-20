@@ -51,7 +51,7 @@ The system runs on **RetroPie** with custom optimizations for the Pi 5. We've al
 ## 🔧 How to Build
 Detailed assembly instructions, 3D printing settings, and the Hardware can be found in our dedicated guide:
 
-👉 **[Read the Step-by-Step Build Guide here!](./Gudie/BUILD.md)**
+👉 **[Read the Step-by-Step Build Guide here!](./Guide/BUILD.md)**
 
 ## 📜 License
 This project is licensed under the **GNU General Public License v3.0**. See the [LICENSE](LICENSE) file for details.
