@@ -13,9 +13,9 @@ The Bigtendo is built around a powerful SBC core with custom-programmed input lo
 * **Controller Interface:** Adafruit Feather RP2040 (USB-HID bridge)
 * **Inputs:** 2x Analog Joysticks, 20x Physical Tactile Buttons
 * **Audio:** I2S DAC + Audio Amplifier + 2x 2W Internal Speakers
-* **Enclosure:** Custom 3D printed multi-part shell
+* **Enclosure:** Custom 3D printed multi-part shell 
 > [!TIP]
-> **Project Roadmap:** We are currently designing a custom PCB to replace the breadboard/perfboard wiring. This will integrate the audio DAC, amplifier, and controller logic into a single board—significantly reducing the build cost, size, and assembly complexity while making the internal cable management much cleaner.
+> **Project Roadmap:** I am currently designing a custom PCB to replace the breadboard/perfboard wiring. This will integrate the audio DAC, amplifier, and controller logic into a single board—significantly reducing the build cost, size, and assembly complexity while making the internal cable management much cleaner.
 
 ## 📂 Repository Structure
 
