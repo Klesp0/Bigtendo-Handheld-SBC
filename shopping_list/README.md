@@ -1,76 +1,95 @@
-**🛒 Bigtendo Hardware Shopping List**
-
-**This list contains the final components for the Bigtendo project. Items have been selected to balance performance with the goal of a compact handheld design.**
+\#🛒 Bigtendo Hardware Shopping List
 
 
 
-**\[!IMPORTANT] Audio Integration: We are utilizing the Adafruit PCM5102A DAC paired with a PAM8403 amplifier. Ensure your wiring follows the I2S protocol outlined in the wiring\_guide.**
+This list contains the final components for the Bigtendo project. Items have been selected to balance performance with the goal of a compact handheld design.
 
 
 
-**🧠 Core Compute \& Power**
+> \[!IMPORTANT]
 
-**SBC: Raspberry Pi 5 (8GB RAM)**
-
-
-
-**Power Management: Subtronics X1201 UPS Shield**
+> \*\*Audio Integration:\*\* We are utilizing the Adafruit PCM5102A DAC paired with a PAM8403 amplifier. Ensure your wiring follows the I2S protocol outlined in the wiring\_guide.
 
 
 
-**Batteries: 2x 18650 Li-ion Cells (High-discharge)**
+\## 🧠 Core Compute \& Power
+
+* \*\*Brain:\*\*  Raspberry Pi 5 (8GB RAM)
 
 
 
-**Storage: 64GB+ MicroSD Card (Class 10 / U3)**
+* \*\*Power Management:\*\* Subtronics X1201 UPS Shield
 
 
 
-**📺 Display \& Video**
-
-**Screen: 7-inch LCD Display (DSI or HDMI)**
+* \*\*Batteries:\*\* 2x 18650 Li-ion Cells (High-discharge)
 
 
 
-**Video Connection: Micro HDMI Adapter for DIY HDMI cable**
+* \*\*Storage:\*\* 64GB+ MicroSD Card (Class 10 / U3)
 
 
 
-**Enclosure: Custom 3D printed multi-part shell**
+\## 📺 Display \& Video
+
+* \*\*Screen:\*\* 7-inch LCD Display (DSI or HDMI)
 
 
 
-**🕹 Controls \& Logic**
-
-**MCU: Adafruit Feather RP2040**
+* \*\*Video Connection:\*\* Micro HDMI Adapter for DIY HDMI cable
 
 
 
-**Joysticks: 2x Analog Joysticks (Switch/PSP style)**
+* \*\*Enclosure:\*\* Custom 3D printed multi-part shell
 
 
 
-**Buttons: 20x 6x6mm Tactile Switches**
+\## 🕹 Controls \& Logic
+
+* \*\*MCU:\*\* Adafruit Feather RP2040
 
 
 
-**Perfboards: 2x 6x4cm Perfboards**
+* \*\*Joysticks:\*\* 2x Analog Joysticks
 
 
 
-**🔊 Audio System**
-
-**DAC: Adafruit PCM5102A I2S**
+* \*\*Buttons:\*\* 20x 6x6mm Tactile Switches
 
 
 
-**Amplifier: PAM8403 5V Stereo Amplifier**
+* \*\*Perfboards:\*\* 2x 6x4cm Perfboards
 
 
 
-**Speakers: 2x 2W Internal Speakers (8 Ohm)**
+\## 🔊 Audio System
+
+* \*\*DAC:\*\* Adafruit PCM5102A I2S
 
 
 
-**\[!TIP] Space Management: When assembling the multi-part shell, route the DIY HDMI cable before securing the Raspberry Pi 5 to ensure there is no tension on the Micro HDMI port.**
+* \*\*Amplifier:\*\* PAM8403 Stereo Amplifier
+
+
+
+* \*\*Speakers:\*\* 2x 2W Internal Speakers (8 Ohm)
+
+
+
+\## Other:
+
+* you will also need an old micro-usb and male-female usb-c cable
+* from usb-micro we will make a custom cable to make it smaller
+
+!\[micro](/Media/images/usb\_micro)
+
+* the usb-c is for powering the ups
+
+!\[c](/Media/images/usb\_c)
+
+
+
+> \[!TIP]
+
+> \*\*Space Management:\*\* When assembling the multi-part shell, route the DIY HDMI cable before securing the Raspberry Pi 5 to ensure there is no tension on the Micro HDMI port.
 
