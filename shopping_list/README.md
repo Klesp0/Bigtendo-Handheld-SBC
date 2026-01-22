@@ -2,8 +2,6 @@
 
 This list contains the final components for the Bigtendo project. Items have been selected to balance performance with the goal of a compact handheld design.
 
-> [!IMPORTANT]
-> **Audio Integration:** We are utilizing the Adafruit PCM5102A DAC paired with a PAM8403 amplifier. Ensure your wiring follows the I2S protocol outlined in the wiring_guide.
 
 ## 🧠 Core Compute & Power
 **Brain:** Raspberry Pi 5 (8GB RAM)
@@ -12,7 +10,7 @@ This list contains the final components for the Bigtendo project. Items have bee
 
 **Batteries:** 2x 18650 Li-ion Cells (High-discharge)
 
-**Storage:** 64GB+ MicroSD Card (Class 10 / U3)
+**Storage:** 64GB+ MicroSD Card
 
 ## 📺 Display & Video
 **Screen:** 7-inch LCD Display (DSI or HDMI)
@@ -44,5 +42,3 @@ from usb-micro we will make a custom cable to make it smaller
 the usb-c is for powering the ups
 ![c](../Media/images/usb_c)
 
-> [!TIP]
-> **Space Management:** When assembling the multi-part shell, route the DIY HDMI cable before securing the Raspberry Pi 5 to ensure there is no tension on the Micro HDMI port.

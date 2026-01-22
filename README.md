@@ -46,7 +46,7 @@ The system runs on **RetroPie** with custom optimizations for the Pi 5. We've al
 * **Pygame Titles:** Custom retro-style games found in `/Games`. Launch via: `python3 games/title_name.py`.
 * **Godot Projects:** Linux/ARM exports for the Bigtendo hardware.
 
-> **Note:** We are currently working on a custom menu integration to launch these games directly from EmulationStation without needing the terminal.
+> **Note:** We are currently working on a custom menu integration to launch these games directly from Emulation Station without needing the terminal.
 
 ## 🔧 How to Build
 Detailed assembly instructions, 3D printing settings, and the Hardware can be found in our dedicated guide:
