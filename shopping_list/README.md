@@ -14,7 +14,7 @@ This list contains the final components for the Bigtendo project. Items have bee
 
 \## 🧠 Core Compute \& Power
 
-* \*\*Brain:\*\*  Raspberry Pi 5 (8GB RAM)
+* \*\*Brain:\*\* Raspberry Pi 5 (8GB RAM)
 
 
 
