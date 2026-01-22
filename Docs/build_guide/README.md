@@ -22,7 +22,7 @@ This guide covers the initial hardware setup, operating system installation, and
 >[!TIP] 
 >If you encounter errors while updating or downloading files from GitHub, connect via Ethernet for a more stable connection.
 
-* **RetroPie Installation:** Open the terminal and follow the Subtronics installation scripts for the X1201.
+* **RetroPie Installation:** Open the terminal and follow the Subtronics installation scripts for the [X1201](https://suptronics.com/Raspberrypi/Power_mgmt/x120x-v1.0_software.html).
 
 * **Emulation Layer:** To run RetroPie on top of Raspberry Pi OS, follow this  guide starting at [03:40]:
 [![Watch the video](https://img.youtube.com/vi/AaseHnf0k2o/0.jpg)](https://www.youtube.com/watch?v=AaseHnf0k2o)
