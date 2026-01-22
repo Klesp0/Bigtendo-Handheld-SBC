@@ -4,8 +4,7 @@ This guide covers the initial hardware setup, operating system installation, and
 ## 🔌 Phase 1: Core Hardware Assembly
 * **UPS Mounting:** Secure the Subtronics X1201 UPS Shield directly onto the Raspberry Pi 5 GPIO pins.
 
-* **Cooling:** Install the official Raspberry Pi Active Cooler. Ensure the heatsink and fan have enough clearance under the UPS shield.
-
+* **Cooling:** Install the official Raspberry Pi Active Cooler. 
 * **Power:** Connect your Li-ion batteries to the UPS shield.
 
 >[!WARNING] 

@@ -1,4 +1,4 @@
-#🛒 Bigtendo Hardware Shopping List
+# 🛒 Bigtendo Hardware Shopping List
 
 This list contains the final components for the Bigtendo project. Items have been selected to balance performance with the goal of a compact handheld design.
 
