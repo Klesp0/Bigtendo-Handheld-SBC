@@ -1,4 +1,4 @@
-\#🛒 Bigtendo Hardware Shopping List
+\# 🛒 Bigtendo Hardware Shopping List
 
 
 
@@ -14,78 +14,63 @@ This list contains the final components for the Bigtendo project. Items have bee
 
 \## 🧠 Core Compute \& Power
 
-* \*\*Brain:\*\* Raspberry Pi 5 (8GB RAM)
+\* \*\*Brain:\*\* Raspberry Pi 5 (8GB RAM)
 
+\* \*\*Power Management:\*\* Subtronics X1201 UPS Shield
 
+\* \*\*Batteries:\*\* 2x 18650 Li-ion Cells (High-discharge)
 
-* \*\*Power Management:\*\* Subtronics X1201 UPS Shield
-
-
-
-* \*\*Batteries:\*\* 2x 18650 Li-ion Cells (High-discharge)
-
-
-
-* \*\*Storage:\*\* 64GB+ MicroSD Card (Class 10 / U3)
+\* \*\*Storage:\*\* 64GB+ MicroSD Card (Class 10 / U3)
 
 
 
 \## 📺 Display \& Video
 
-* \*\*Screen:\*\* 7-inch LCD Display (DSI or HDMI)
+\* \*\*Screen:\*\* 7-inch LCD Display (DSI or HDMI)
 
+\* \*\*Video Connection:\*\* Micro HDMI Adapter for DIY HDMI cable
 
-
-* \*\*Video Connection:\*\* Micro HDMI Adapter for DIY HDMI cable
-
-
-
-* \*\*Enclosure:\*\* Custom 3D printed multi-part shell
+\* \*\*Enclosure:\*\* Custom 3D printed multi-part shell
 
 
 
 \## 🕹 Controls \& Logic
 
-* \*\*MCU:\*\* Adafruit Feather RP2040
+\* \*\*MCU:\*\* Adafruit Feather RP2040
 
+\* \*\*Joysticks:\*\* 2x Analog Joysticks
 
+\* \*\*Buttons:\*\* 20x 6x6mm Tactile Switches
 
-* \*\*Joysticks:\*\* 2x Analog Joysticks
-
-
-
-* \*\*Buttons:\*\* 20x 6x6mm Tactile Switches
-
-
-
-* \*\*Perfboards:\*\* 2x 6x4cm Perfboards
+\* \*\*Perfboards:\*\* 2x 6x4cm Perfboards
 
 
 
 \## 🔊 Audio System
 
-* \*\*DAC:\*\* Adafruit PCM5102A I2S
+\* \*\*DAC:\*\* Adafruit PCM5102A I2S
+
+\* \*\*Amplifier:\*\* PAM8403 Stereo Amplifier
+
+\* \*\*Speakers:\*\* 2x 2W Internal Speakers (8 Ohm)
 
 
 
-* \*\*Amplifier:\*\* PAM8403 Stereo Amplifier
+\## 🛠 Other Materials
+
+You will also need an old micro-USB and a male-to-female USB-C cable.
 
 
 
-* \*\*Speakers:\*\* 2x 2W Internal Speakers (8 Ohm)
+\* \*\*Custom Micro-USB:\*\* From this, we will make a custom short cable to save space.
+
+!\[micro](../Media/images/usb\_micro.jpg)
 
 
 
-\## Other:
+\* \*\*USB-C Extension:\*\* This is for powering the UPS shield from the outside of the shell.
 
-* you will also need an old micro-usb and male-female usb-c cable
-* from usb-micro we will make a custom cable to make it smaller
-
-!\[micro](/Media/images/usb\_micro)
-
-* the usb-c is for powering the ups
-
-!\[c](/Media/images/usb\_c)
+!\[c](../Media/images/usb\_c.jpg)
 
 
 
