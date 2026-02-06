@@ -166,7 +166,7 @@ class PowerUp:
 
 class Breakout(Game):
     def __init__(self, fullscreen=True):
-        super().__init__(fullscreen, icon_path="SW\\assets\\images\\breakout\\breakout_icon.png", title="Breakout")
+        super().__init__(fullscreen, icon_path="SW\\assets\\images\\breakout\\breakout_icon.png", title="Breakout", game_name="Breakout")
         
         self.width = pygame.display.get_window_size()[0]
         self.height = pygame.display.get_window_size()[1]
@@ -208,8 +208,6 @@ class Breakout(Game):
         
         self.game_over_surface = self.font1.render("GAME OVER", False, "#ff0000").convert_alpha()
         self.game_over_rect = self.game_over_surface.get_rect(center=(self.center_x, self.center_y))
-        
-        self.score = 0
     
     def handle_input(self):
         if self.game_state == 0:
@@ -271,6 +269,7 @@ class Breakout(Game):
             
             if len(self.balls) == 0:
                 self.game_state = 2
+                self.save_system.update_score("Breakout", self.score)
     
     def draw(self):
         self.screen.blit(self.bg, (0, 0))
@@ -309,4 +308,4 @@ class Breakout(Game):
     
 if __name__ == "__main__":
     breakout = Breakout(fullscreen=False)
-    score = breakout.run()
+    breakout.run()

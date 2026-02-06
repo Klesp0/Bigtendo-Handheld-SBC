@@ -3,9 +3,10 @@ import pygame
 import sys
 from config import *
 from abc import ABC, abstractmethod
+from _save_system import SaveSystem
 
 class Game(ABC):
-    def __init__(self, fullscreen, title, icon_path):
+    def __init__(self, fullscreen, title, icon_path, game_name):
         
         pygame.init()
             
@@ -24,6 +25,9 @@ class Game(ABC):
         self.running = True
         self.paused = False
         self.score = 0
+        
+        self.save_system = SaveSystem()
+        self.highscore = self.save_system.get_highscore(game_name)
     
     @abstractmethod
     def handle_input(self):
@@ -40,7 +44,6 @@ class Game(ABC):
     def update(self):
   
         # Aktualizácia hernej logiky a stavu hry
-        # Volá sa každý frame ak hra nie je pozastavená
         # Snake - pohyb hada, kolízie    
         # Platformer - fyzika, kolízie, AI
         # Flappy Bird - padanie, kolízie
@@ -52,7 +55,6 @@ class Game(ABC):
     def draw(self):
        
         # Vykreslenie všetkých objektov na obrazovku
-        # Volá sa každý frame (aj keď je hra pozastavená)
         # Snake - pozadie, had, jablko, skóre
         # Platformer - pozadie, platformy, hráč, nepriatelia
         # Space Shooter - pozadie, hráč, nepriateľia, projektily
@@ -67,12 +69,12 @@ class Game(ABC):
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.running = False
+                    self.save_system.update_time(self.game_name)
                 
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE:
                         self.running = False
                         
-                    # tu bude pauzovanie hry
                     if event.key == pygame.K_p:
                         self.paused = not self.paused       
             
