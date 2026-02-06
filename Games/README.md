@@ -1,37 +1,36 @@
 # Software
 
-## Structure
-- `/games` - Individual game folders
-- `/launcher` - Main menu system
-- `/retropie_integration` - RetroPie launcher scripts
-- `/standalone` - Standalone launcher (no RetroPie)
 
 ## Setup
 ```bash
 pip3 install pygame
 python3 -m pytest tests/
 ```
+## Games
 
-## Adding New Game
-1. Create folder: `games/tool/your_game/`
-2. Inherit from `shared.game_base.Game`
-3. Implement: `handle_input()`, `update()`, `draw()`
-4. Create launcher: `retropie_integration/YourGame.sh`
-5. Add to menu: `launcher/main_menu.py`
+### Pygame Games
+- **Snake** - Classic snake game
+- **Tetris** - Block puzzle
+- **Pong** - 2-player paddle game
+- **Breakout** - Brick breaker
+- **Space Invaders** - Retro shooter
+- **Memory** - Card matching
 
-## Testing
-```bash
-python3 games/snake/snake.py --windowed
-python3 tests/test_all.py
-```
+### Godot Games
+Located in `Godot/` folder:
+- **Flappy Bird** - Side-scroller
+- **Endless Runner** - Auto-runner
+- **Platformer** - Jump & run
+- **Pac-Man** - Maze chase
+- **Rhythm** - Music timing
+- **Top-Down Shooter** - Twin-stick shooter
+- **Tower Defense** - Strategy
 
-## **📦 DEVELOPMENT ORDER & FILE DESCRIPTIONS**
+### Adding New Game
+See [game_development_guide.md](../docs/game_development_guide.md)
 
-### **Development Order (Priority)**
+## **Development Order (Priority)**
 
-1. config.py           ← Start here (30 min) hotove, pise ze je ale je to ok AI
-2. input_handler.py     ← Essential for input (1h) hotove, pise ze neni AI
-3. save_system.py      ← Needed for high scores (1h) hotove, pise ze je AI na 60%
-4. game_base.py        ← Foundation for all games (1.5h) hotove, pise ze neni AI
-7. main_menu.py        ← Launcher system (2h)
-8. retropie_launcher.py ← RetroPie integration (30 min)
+1. input_handler.py     ← remake to adafruit input
+2. main_menu.py        ← Launcher system
+3. retropie_launcher.py ← RetroPie integration

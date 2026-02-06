@@ -5,7 +5,7 @@
 ### 1. Transfer Games to RPi
 ```bash
 # On PC:
-cd ~/hellathon-console
+cd ~/console
 tar -czf games.tar.gz SW/games/ SW/shared/
 
 # Transfer:
