@@ -115,7 +115,7 @@ if __name__ == "__main__":
         def __init__(self, fullscreen=True, title="Game", icon_path=False):
             super().__init__(fullscreen, title, icon_path)
             
-            self.player_surf = pygame.image.load("SW/shared/bird_flap_1.png").convert_alpha()
+            self.player_surf = pygame.image.load("Games/shared/bird_flap_1.png").convert_alpha()
             self.player_rect = self.player_surf.get_rect(midbottom = (WIDTH/2, HEIGHT/2))
             self.rect = pygame.Rect(50, 50, 200, 100)
             self.stvorec = pygame.draw.rect(self.screen, "Blue", self.rect)

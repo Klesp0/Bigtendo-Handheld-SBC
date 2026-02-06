@@ -57,7 +57,7 @@ GPIO_PINS = {
 
 # JOYSTICKY
 # analogovy joystick 0-1023
-JOYSTICK_DEADZONE = 50 # kolko nereaguje, ignoruje small movements
+JOYSTICK_DEADZONE = 50 
 JOYSTICK_MAX = 1023
 JOYSTICK_CENTER = 512
 JOYSTICK_MIN = 0
@@ -66,9 +66,6 @@ JOYSTICK_SENSITIVITY = 1.0 # ked stihneme tak bude v nastaveniach
 # KLAVESNICA
 WASD = False
 KEYBOARD_ENABLED = True
-
-# MOZNO UROBIT CUSTOM BINDY
-# napisat nejake dobre default bindy
 
 KEYBOARD_SIPKY = {
     # sipky
@@ -84,7 +81,7 @@ KEYBOARD_SIPKY = {
     "Y": pygame.K_y,
     
     # menu
-    "START": pygame.K_RETURN, # enter
+    "START": pygame.K_RETURN,
     "HOME": pygame.K_ESCAPE,
     
     # packy
@@ -124,7 +121,6 @@ KEYBOARD_SIPKY = {
     
 }
 
-# tiez urobit nejake dobre default bindy
 KEYBOARD_WASD = {
     # wasd
     "UP": pygame.K_w,
@@ -139,7 +135,7 @@ KEYBOARD_WASD = {
     "Y": pygame.K_l,
     
     # menu
-    "START": pygame.K_RETURN, # enter
+    "START": pygame.K_RETURN, 
     "HOME": pygame.K_ESCAPE,
     
     # packy
@@ -239,7 +235,7 @@ PYGAME_GAMES_PATH = GAMES_PATH / "Pygame"
 GODOT_GAMES_PATH = GAMES_PATH / "Godot"
 
 # Save data path
-SAVE_PATH = PROJECT_PATH / "saves"
+SAVE_PATH = PROJECT_PATH / "Games" / "saves"
 HIGHSCORES_TIME_FILE = SAVE_PATH / "highscores_times.json"
 SETTINGS_FILE = SAVE_PATH / "settings"
 

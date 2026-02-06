@@ -1,7 +1,5 @@
 # neni este dorobene, nechytat sa
-# dorobit just_press a is_pressed, nefunguju
-# opytat sa clauda na adafruit
-# opytat sa clauda preco moj test nefunguje a od gemini funguje, ci to iba mosim pouzit v hre alebo nieco ine
+# dorobit pre adafruit
 
 try:
     from gpiozero import Button, MCP3001
@@ -206,64 +204,32 @@ class InputHandler:
                 joystick.close()   
     
 if __name__ == "__main__":            
-    # i = InputHandler()
-    
-    # print(i.is_pressed("UP"))
-    # print(i.just_pressed("UP"))
-    # print(i.left_joystick())
-    # print(i.right_joystick())
-    # print(i.get_axis("RIGHT", "X"))
-    # i.cleanup()
-    
-    # while True:
-    #     a = i.is_pressed("A")
-    #     b = i.just_pressed("B")
-    #     print(a)
-    #     print(b)
-        
-    #     if a:
-    #         print(a)
-    #         break
-        
-    #     if b:
-    #         print(b)
-    #         break
     
     i = InputHandler()
     
-    # Ďalšia potrebná inicializácia:
-    # 1. Pygame vyžaduje okno, aby správne čítal vstup klávesnice na niektorých OS.
-    # 2. Musíme spustiť event loop.
-    
     if KEYBOARD_ENABLED:
-        screen = pygame.display.set_mode((100, 100)) # Vytvoríme minimálne okno
+        screen = pygame.display.set_mode((100, 100))
         pygame.display.set_caption("Input Test")
         
     print("--- Test Start ---")
     
     while True:
-        # 1. KĽÚČOVÝ KROK: Spracovanie udalostí Pygame
-        # Toto aktualizuje stav klávesnice, ktorý číta get_pressed()
         for event in pygame.event.get(): 
             if event.type == pygame.QUIT:
                 i.cleanup()
                 pygame.quit()
                 exit()
         
-        # 2. Čítanie vstupu
         a = i.is_pressed("A")
         b = i.just_pressed("B")
         
-        if a or b: # Aby to neflushovalo obrazovku tisíckami False
+        if a or b:
             print(f"is_pressed('A'): {a}, just_pressed('B'): {b}")
         
-        # 3. Pridanie časového limitu, aby sa CPU nepreťažovalo
-        time.sleep(1 / 60) # Spomalenie na 60 FPS
+        time.sleep(1 / 60)
         
-        # Prípadné ukončenie testu (ako si chcel Ty)
+        
         if a or b:
-            # Ak sa zaregistruje stlačenie, test skončí, aby si videl výstup.
-            # Zmenil som to, aby program nepadol pri cleanup pred break.
             pass
 
         i.cleanup()

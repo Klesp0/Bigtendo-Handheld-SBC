@@ -51,7 +51,7 @@ class Ball:
         else:
             self.dy = dy
             
-        self.surf = pygame.image.load("SW\\assets\\images\\breakout\\ball_breakout.png").convert_alpha()
+        self.surf = pygame.image.load("Games\\assets\\images\\breakout\\ball_breakout.png").convert_alpha()
         self.surf = pygame.transform.scale(self.surf, (self.surf.get_width() * 3, self.surf.get_height() * 3))
         self.rect = self.surf.get_rect(center=(self.x, self.y))
         self.radius = self.rect.width // 2
@@ -127,7 +127,7 @@ class Brick:
             self.color = "red"
             self.b_score = 10
             
-        self.surf = pygame.image.load(f"SW\\assets\\images\\breakout\\brick_{self.color}.png").convert_alpha()
+        self.surf = pygame.image.load(f"Games\\assets\\images\\breakout\\brick_{self.color}.png").convert_alpha()
         self.width = self.surf.get_width()
         self.height = self.surf.get_height()
         self.surf = pygame.transform.scale(self.surf, (self.width * 2, self.height * 2))
@@ -141,9 +141,9 @@ class PowerUp:
         self.type = random.choice(power_up_types)
 
         if self.type == "multiball":
-            self.surf = pygame.image.load("SW\\assets\\images\\breakout\\powerup_multiball.png").convert_alpha()
+            self.surf = pygame.image.load("Games\\assets\\images\\breakout\\powerup_multiball.png").convert_alpha()
         elif self.type == "expand_paddle":
-            self.surf = pygame.image.load("SW\\assets\\images\\breakout\\powerup_expand.png").convert_alpha()
+            self.surf = pygame.image.load("Games\\assets\\images\\breakout\\powerup_expand.png").convert_alpha()
         
         self.rect = self.surf.get_rect(center = (self.x, self.y))
     
@@ -166,7 +166,7 @@ class PowerUp:
 
 class Breakout(Game):
     def __init__(self, fullscreen=True):
-        super().__init__(fullscreen, icon_path="SW\\assets\\images\\breakout\\breakout_icon.png", title="Breakout", game_name="Breakout")
+        super().__init__(fullscreen, icon_path="Games\\assets\\images\\breakout\\breakout_icon.png", title="Breakout", game_name="Breakout")
         
         self.width = pygame.display.get_window_size()[0]
         self.height = pygame.display.get_window_size()[1]
@@ -181,7 +181,7 @@ class Breakout(Game):
         
         self.balls = [Ball(self.center_x, self.height - 150)]
 
-        brick_surf = pygame.image.load(f"SW\\assets\\images\\breakout\\brick_blue.png").convert_alpha()
+        brick_surf = pygame.image.load(f"Games\\assets\\images\\breakout\\brick_blue.png").convert_alpha()
         self.brick_width = brick_surf.get_width()
         self.brick_height = brick_surf.get_height()
          
@@ -194,7 +194,7 @@ class Breakout(Game):
         self.power_ups = []
         self.power_ups_types = ["multiball", "expand_paddle"]
         
-        self.bg = pygame.image.load("SW\\assets\\images\\breakout\\breakout_bg.png").convert()
+        self.bg = pygame.image.load("Games\\assets\\images\\breakout\\breakout_bg.png").convert()
         self.bg = pygame.transform.scale(self.bg, (self.width, self.height))
         
         if self.i.GPIO1 and GPIO_ENABLED and self.i.GPIO:
@@ -202,7 +202,7 @@ class Breakout(Game):
         else:
             self.button = "SPACE"
         
-        self.font1 = pygame.font.Font("SW\\assets\\fonts\\Pixeltype.ttf", 50)
+        self.font1 = pygame.font.Font("Games\\assets\\fonts\\Pixeltype.ttf", 50)
         self.font_surface = self.font1.render(f"Press '{self.button}' to start", False, "#16db65").convert_alpha()
         self.font_rect = self.font_surface.get_rect(center=(self.center_x, self.center_y))
         
