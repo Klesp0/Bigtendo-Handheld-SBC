@@ -5,7 +5,7 @@ from _input_handler import InputHandler
 from _save_system import SaveSystem
 from config import *
 
-# upravit score, po kazdom game_over vrati score
+# urobit start menu
 class Padle:
     def __init__(self, x, y, width, height, screen):
         self.x = x

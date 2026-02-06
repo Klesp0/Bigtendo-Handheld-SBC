@@ -27,7 +27,8 @@ class Game(ABC):
         self.score = 0
         
         self.save_system = SaveSystem()
-        self.highscore = self.save_system.get_highscore(game_name)
+        self.game_name = game_name
+        self.highscore = self.save_system.get_highscore(self.game_name)
     
     @abstractmethod
     def handle_input(self):
