@@ -34,7 +34,17 @@ class Card:
             "orange": "orange",
             "strawberry": "pink",
             "watermelon": "green",
-            "pineapple": "gold"
+            "pineapple": "gold",
+            "kiwi": "red",
+            "mango": "yellow",
+            "peach": "darkred",
+            "pear": "darkred",
+            "plum": "purple",
+            "lemon": "orange",
+            "blueberry": "pink",
+            "raspberry": "green",
+            "apricot": "gold",
+            "coconut": "red"
         }
         self.front_surf.fill(self.color_map.get(card_type, "gray"))
         
@@ -91,7 +101,7 @@ class Pexeso(Game):
             fullscreen, 
             icon_path="Games/assets/images/pexeso/pexeso_icon.png",  # TODO: Doplň cestu
             title="Memory", 
-            game_name="Pexeso_easy"
+            game_name="Memory_easy"
         )
         
         self.width = pygame.display.get_window_size()[0]
@@ -118,9 +128,9 @@ class Pexeso(Game):
         
         if difficulty == "hard":
             self.card_types += [
-                "apple", "banana", "cherry", "grape",
-                "orange", "strawberry", "watermelon", "pineapple",
-                "apple", "banana"
+                "kiwi", "mango", "peach", "pear",
+                "plum", "lemon", "blueberry", "raspberry",
+                "apricot", "coconut"
             ]
         
         # 0=difficulty select, 1=game menu, 2=playing, 3=win
@@ -238,9 +248,9 @@ class Pexeso(Game):
                     self.card_types = [
                         "apple", "banana", "cherry", "grape",
                         "orange", "strawberry", "watermelon", "pineapple",
-                        "apple", "banana", "cherry", "grape",
-                        "orange", "strawberry", "watermelon", "pineapple",
-                        "apple", "banana"
+                        "kiwi", "mango", "peach", "pear",
+                        "plum", "lemon", "blueberry", "raspberry",
+                        "apricot", "coconut"
                     ]
                 else:
                     self.card_types = [
@@ -249,7 +259,7 @@ class Pexeso(Game):
                     ]
                 
                 self.create_cards()
-                self.highscore = self.save_system.get_highscore(f"Pexeso_{self.difficulty}")
+                self.highscore = self.save_system.get_highscore(f"Memory_{self.difficulty}")
                 self.game_state = 1
         
         elif self.game_state == 1:
@@ -279,8 +289,6 @@ class Pexeso(Game):
                     self.select_card()
         
         elif self.game_state == 3:
-            if self.i.just_pressed("A"):
-                self.save_system.update_time(f"Pexeso_{self.difficulty}")
                 self.__init__(fullscreen=self.screen.get_flags() & pygame.FULLSCREEN, difficulty=self.difficulty)
     
     def select_card(self):
@@ -311,7 +319,7 @@ class Pexeso(Game):
             
             if self.matches_found == self.total_pairs:
                 self.game_state = 3
-                self.save_system.update_score(f"Pexeso_{self.difficulty}", self.calculate_score())
+                self.save_system.update_score(f"Memory_{self.difficulty}", self.calculate_score())
                 if self.calculate_score() > self.highscore:
                     self.highscore = self.calculate_score()
     
