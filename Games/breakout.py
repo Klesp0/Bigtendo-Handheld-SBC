@@ -290,7 +290,6 @@ class Breakout(Game):
         
         if self.game_state == 0:
             surface = pygame.Surface((self.width, self.height))
-            surface.set_alpha(128)
             surface.fill("Black")
             self.screen.blit(surface, (0, 0))
             highscore_text = self.font1.render(f"Best Score: {self.highscore}", False, "#FFD700").convert_alpha()

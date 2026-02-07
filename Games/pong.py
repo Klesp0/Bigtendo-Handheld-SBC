@@ -187,8 +187,6 @@ class Pong(Game):
         
         elif self.game_state == 4:
             if self.i.just_pressed("A"):
-                if self.game_mode == "singleplayer":
-                    self.save_system.update_time(f"Pong_{self.ai_difficulty}")
                 self.__init__(fullscreen=self.screen.get_flags() & pygame.FULLSCREEN)
     
     def update(self):
