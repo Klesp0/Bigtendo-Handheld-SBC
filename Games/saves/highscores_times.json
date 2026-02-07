@@ -4,7 +4,7 @@
         "Pong": 0,
         "Breakout": 0,
         "Tetris": 0,
-        "Pexeso": 1770491856.0136135,
+        "Pexeso": 1770492402.8260942,
         "Space Invaders": 0,
         "Flappy Bird": 0,
         "Endless Runner": 0,
@@ -17,6 +17,7 @@
     },
     "highscores": {
         "Snake": 0,
+        "Pong": 0,
         "Pong_easy": 0,
         "Pong_medium": 0,
         "Pong_hard": 0,

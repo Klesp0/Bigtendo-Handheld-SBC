@@ -163,6 +163,7 @@ class Pong(Game):
             if self.i.just_pressed("A"):
                 difficulties = ["easy", "medium", "hard", "impossible"]
                 self.ai_difficulty = difficulties[self.selected_difficulty]
+                self.highscore = self.save_system.get_highscore(f"Pong_{self.ai_difficulty}")
                 self.game_state = 2
         
         elif self.game_state == 2:
@@ -186,7 +187,8 @@ class Pong(Game):
         
         elif self.game_state == 4:
             if self.i.just_pressed("A"):
-                self.save_system.update_time("Pong")
+                if self.game_mode == "singleplayer":
+                    self.save_system.update_time(f"Pong_{self.ai_difficulty}")
                 self.__init__(fullscreen=self.screen.get_flags() & pygame.FULLSCREEN)
     
     def update(self):
@@ -216,9 +218,11 @@ class Pong(Game):
             if self.score_p1 >= self.winning_score or self.score_p2 >= self.winning_score:
                 self.game_state = 4
                 winner_score = max(self.score_p1, self.score_p2)
-                self.save_system.update_score("Pong", winner_score)
-                if winner_score > self.highscore:
-                    self.highscore = winner_score
+                
+                if self.game_mode == "singleplayer":
+                    self.save_system.update_score(f"Pong_{self.ai_difficulty}", winner_score)
+                    if winner_score > self.highscore:
+                        self.highscore = winner_score
     
     def update_ai(self, dt):
         ai_speeds = {
@@ -336,20 +340,26 @@ class Pong(Game):
         
         if self.game_mode == "singleplayer":
             mode_text = f"Mode: SINGLEPLAYER (AI: {self.ai_difficulty.upper()})"
+            mode_surf = self.font_medium.render(mode_text, True, "yellow")
+            mode_rect = mode_surf.get_rect(center=(self.center_x, self.center_y - 20))
+            self.screen.blit(mode_surf, mode_rect)
+            
+            highscore_text = self.font_medium.render(f"Best Score: {self.highscore}", True, "#FFD700")
+            highscore_rect = highscore_text.get_rect(center=(self.center_x, self.center_y + 40))
+            self.screen.blit(highscore_text, highscore_rect)
+            
+            start_y = self.center_y + 120
         else:
             mode_text = "Mode: 2 PLAYERS"
-        
-        mode_surf = self.font_medium.render(mode_text, True, "yellow")
-        mode_rect = mode_surf.get_rect(center=(self.center_x, self.center_y - 20))
-        self.screen.blit(mode_surf, mode_rect)
-        
-        highscore_text = self.font_medium.render(f"Best Score: {self.highscore}", True, "#FFD700")
-        highscore_rect = highscore_text.get_rect(center=(self.center_x, self.center_y + 40))
-        self.screen.blit(highscore_text, highscore_rect)
+            mode_surf = self.font_medium.render(mode_text, True, "yellow")
+            mode_rect = mode_surf.get_rect(center=(self.center_x, self.center_y))
+            self.screen.blit(mode_surf, mode_rect)
+            
+            start_y = self.center_y + 100
         
         start_text = f"Press '{self.button}' to start"
         start_surf = self.font_medium.render(start_text, True, "white")
-        start_rect = start_surf.get_rect(center=(self.center_x, self.center_y + 120))
+        start_rect = start_surf.get_rect(center=(self.center_x, start_y))
         self.screen.blit(start_surf, start_rect)
     
     def draw_game(self):
@@ -399,11 +409,12 @@ class Pong(Game):
         restart_rect = restart_surf.get_rect(center=(self.center_x, self.center_y + 120))
         self.screen.blit(restart_surf, restart_rect)
         
-        if final_score > self.highscore:
-            record_text = "NEW RECORD!"
-            record_surf = self.font_medium.render(record_text, True, "red")
-            record_rect = record_surf.get_rect(center=(self.center_x, self.center_y - 120))
-            self.screen.blit(record_surf, record_rect)
+        if self.game_mode == "singleplayer":
+            if final_score > self.highscore:
+                record_text = "NEW RECORD!"
+                record_surf = self.font_medium.render(record_text, True, "red")
+                record_rect = record_surf.get_rect(center=(self.center_x, self.center_y - 120))
+                self.screen.blit(record_surf, record_rect)
 
 
 if __name__ == "__main__":
