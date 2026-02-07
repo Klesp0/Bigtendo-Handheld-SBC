@@ -18,7 +18,7 @@ ball_speed_mult = 1.0
 # * * * * * PAIN * * * * *
 
 #text
-font1 = pygame.font.Font("SW/PONG/Pixeltype.ttf",50)
+font1 = pygame.font.Font("Games/assets/fonts/Pixeltype.ttf",50)
 font_surface = font1.render(f"{sc1}    {sc2}", False, "#000000").convert_alpha()
 font_rect = font_surface.get_rect(center=(512,50))
 
@@ -35,35 +35,35 @@ wintext2_surf = font1.render("Player 2 won.",False, "white").convert_alpha()
 wintext2_rect = wintext2_surf.get_rect(center = (512, 250))
 
 #p1
-player = pygame.image.load("SW/PONG/pongPlayer.png").convert_alpha()
+player = pygame.image.load("Games/assets/images/pong/pongPlayer.png").convert_alpha()
 player = pygame.transform.scale(
     player,
     (player.get_width() * 8, player.get_height() * 8))
 player_rect = player.get_rect(midright=(100,300))
 
 #p2
-player2 = pygame.image.load("SW/PONG/pongPlayer2.png").convert_alpha()
+player2 = pygame.image.load("Games/assets/images/pong/pongPlayer2.png").convert_alpha()
 player2 = pygame.transform.scale(
     player2,
     (player2.get_width() * 8, player2.get_height() * 8))
 player2_rect = player2.get_rect(midleft=(1024-100,300))
 
 #ball
-ball = pygame.image.load("SW/PONG/pongBall.png").convert_alpha()
+ball = pygame.image.load("Games/assets/images/pong/pongBall.png").convert_alpha()
 ball = pygame.transform.scale(
     ball,
     (ball.get_width() * 2, ball.get_height() * 2))
 ball_rect = ball.get_rect(center=(512,300))
 
 #mid line
-line = pygame.image.load("SW/PONG/pongLine.png").convert_alpha()
+line = pygame.image.load("Games/assets/images/pong/pongLine.png").convert_alpha()
 line = pygame.transform.scale(
     line,
     (line.get_width() * 6, line.get_height() * 20))
 line_rect = line.get_rect(center=(512,300))
 
 #score board
-board = pygame.image.load("SW/PONG/scoreBoard.png").convert_alpha()
+board = pygame.image.load("Games/assets/images/pong/scoreBoard.png").convert_alpha()
 board = pygame.transform.scale(
     board,
     (board.get_width() * 4, board.get_height() * 4))

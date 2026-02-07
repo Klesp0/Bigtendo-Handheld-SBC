@@ -35,9 +35,16 @@ class SaveSystem:
     
     def update_time(self, game_name):
         current_time = time.time()
-        self.times[game_name] = current_time
-        self.highscores_times["times"] = self.times
-        self.save()
+        
+        if game_name == "Pexeso_easy" or "Pexeso_hard":
+            self.times["Pexeso"] = current_time
+            self.highscores_times["times"] = self.times
+            self.save()
+        
+        else:
+            self.times[game_name] = current_time
+            self.highscores_times["times"] = self.times
+            self.save()
         
 # Test
 if __name__ == "__main__":

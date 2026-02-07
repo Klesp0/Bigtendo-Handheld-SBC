@@ -5,7 +5,7 @@ from _input_handler import InputHandler
 from _save_system import SaveSystem
 from config import *
 
-# urobit start menu
+
 class Padle:
     def __init__(self, x, y, width, height, screen):
         self.x = x
@@ -293,6 +293,9 @@ class Breakout(Game):
             surface.set_alpha(128)
             surface.fill("Black")
             self.screen.blit(surface, (0, 0))
+            highscore_text = self.font1.render(f"Best Score: {self.highscore}", False, "#FFD700").convert_alpha()
+            highscore_rect = highscore_text.get_rect(center=(self.center_x, self.center_y - 60))
+            self.screen.blit(highscore_text, highscore_rect)
             self.screen.blit(self.font_surface, self.font_rect)
         
         elif self.game_state == 2:

@@ -25,7 +25,6 @@ class Card:
         # self.front_img = pygame.image.load(f"SW/assets/images/pexeso/{card_type}.png")
         # self.front_img = pygame.transform.scale(self.front_img, (self.width, self.height))
         
-        # Placeholder - zatiaľ použijeme farby
         self.front_surf = pygame.Surface((self.width, self.height))
         self.color_map = {
             "apple": "red",
@@ -39,7 +38,6 @@ class Card:
         }
         self.front_surf.fill(self.color_map.get(card_type, "gray"))
         
-        # Zadná strana karty (rovnaká pre všetky)
         self.back_surf = pygame.Surface((self.width, self.height))
         self.back_surf.fill("darkblue")
         # TODO: Načítaj textúru zadnej strany
@@ -58,7 +56,6 @@ class Card:
     
     def draw(self, screen, selected=False):
         if self.is_matched:
-            # Sparované karty sú transparentné
             return
         
         scale = abs(self.flip_progress - 0.5) * 2  
@@ -80,12 +77,10 @@ class Card:
         pygame.draw.rect(screen, "white", self.rect, 2)
     
     def flip(self):
-        """Otoč kartu"""
         if not self.is_matched:
             self.is_flipped = True
     
     def unflip(self):
-        """Otoč kartu späť"""
         if not self.is_matched:
             self.is_flipped = False
 
@@ -96,7 +91,7 @@ class Pexeso(Game):
             fullscreen, 
             icon_path="Games/assets/images/pexeso/pexeso_icon.png",  # TODO: Doplň cestu
             title="Memory", 
-            game_name="Pexeso"
+            game_name="Pexeso_easy"
         )
         
         self.width = pygame.display.get_window_size()[0]
@@ -121,20 +116,21 @@ class Pexeso(Game):
             "orange", "strawberry", "watermelon", "pineapple"
         ]
         
-        # Ak je ťažká obtiažnosť, pridaj viac typov
         if difficulty == "hard":
             self.card_types += [
                 "apple", "banana", "cherry", "grape",
                 "orange", "strawberry", "watermelon", "pineapple",
-                "apple", "banana"  # Duplikáty pre 18 párov
+                "apple", "banana"
             ]
         
-        # 0=menu, 1=playing, 2=win
-        self.game_state = 0  
+        # 0=difficulty select, 1=game menu, 2=playing, 3=win
+        self.game_state = 0
         self.moves = 0
         self.matches_found = 0
         self.start_time = 0
         self.elapsed_time = 0
+        
+        self.selected_difficulty = 0
         
         self.cursor_row = 0
         self.cursor_col = 0
@@ -193,32 +189,98 @@ class Pexeso(Game):
             return self.cards[index]
         return None
     
+    def skip_matched_cards(self, direction):
+        original_row = self.cursor_row
+        original_col = self.cursor_col
+        max_steps = self.grid_rows * self.grid_cols
+        steps = 0
+        
+        while steps < max_steps:
+            card = self.get_selected_card()
+            if card and not card.is_matched:
+                return
+            
+            if direction == "UP":
+                self.cursor_row = (self.cursor_row - 1) % self.grid_rows
+            elif direction == "DOWN":
+                self.cursor_row = (self.cursor_row + 1) % self.grid_rows
+            elif direction == "LEFT":
+                self.cursor_col = (self.cursor_col - 1) % self.grid_cols
+            elif direction == "RIGHT":
+                self.cursor_col = (self.cursor_col + 1) % self.grid_cols
+            
+            steps += 1
+        
+        self.cursor_row = original_row
+        self.cursor_col = original_col
+    
     def handle_input(self):
         if self.game_state == 0:
+            if self.i.just_pressed("UP"):
+                self.selected_difficulty = (self.selected_difficulty - 1) % 2
+            
+            if self.i.just_pressed("DOWN"):
+                self.selected_difficulty = (self.selected_difficulty + 1) % 2
+            
             if self.i.just_pressed("A"):
+                if self.selected_difficulty == 0:
+                    self.difficulty = "easy"
+                    self.grid_rows = 4
+                    self.grid_cols = 4
+                else:
+                    self.difficulty = "hard"
+                    self.grid_rows = 6
+                    self.grid_cols = 6
+                
+                self.total_pairs = (self.grid_rows * self.grid_cols) // 2
+                
+                if self.difficulty == "hard":
+                    self.card_types = [
+                        "apple", "banana", "cherry", "grape",
+                        "orange", "strawberry", "watermelon", "pineapple",
+                        "apple", "banana", "cherry", "grape",
+                        "orange", "strawberry", "watermelon", "pineapple",
+                        "apple", "banana"
+                    ]
+                else:
+                    self.card_types = [
+                        "apple", "banana", "cherry", "grape",
+                        "orange", "strawberry", "watermelon", "pineapple"
+                    ]
+                
+                self.create_cards()
+                self.highscore = self.save_system.get_highscore(f"Pexeso_{self.difficulty}")
                 self.game_state = 1
-                self.start_time = time.time()
         
         elif self.game_state == 1:
+            if self.i.just_pressed("A"):
+                self.game_state = 2
+                self.start_time = time.time()
+        
+        elif self.game_state == 2:
             if not self.checking_match:
                 if self.i.just_pressed("UP"):
                     self.cursor_row = (self.cursor_row - 1) % self.grid_rows
+                    self.skip_matched_cards("UP")
                 
                 if self.i.just_pressed("DOWN"):
                     self.cursor_row = (self.cursor_row + 1) % self.grid_rows
+                    self.skip_matched_cards("DOWN")
                 
                 if self.i.just_pressed("LEFT"):
                     self.cursor_col = (self.cursor_col - 1) % self.grid_cols
+                    self.skip_matched_cards("LEFT")
                 
                 if self.i.just_pressed("RIGHT"):
                     self.cursor_col = (self.cursor_col + 1) % self.grid_cols
+                    self.skip_matched_cards("RIGHT")
                 
                 if self.i.just_pressed("A"):
                     self.select_card()
         
-        elif self.game_state == 2:
+        elif self.game_state == 3:
             if self.i.just_pressed("A"):
-                self.save_system.update_time("Pexeso")
+                self.save_system.update_time(f"Pexeso_{self.difficulty}")
                 self.__init__(fullscreen=self.screen.get_flags() & pygame.FULLSCREEN, difficulty=self.difficulty)
     
     def select_card(self):
@@ -235,7 +297,7 @@ class Pexeso(Game):
                     self.check_timer = time.time()
     
     def update(self):
-        if self.game_state == 1:
+        if self.game_state == 2:
             self.elapsed_time = time.time() - self.start_time
             
             dt = self.clock.get_time() / 1000.0
@@ -248,8 +310,8 @@ class Pexeso(Game):
                     self.checking_match = False
             
             if self.matches_found == self.total_pairs:
-                self.game_state = 2
-                self.save_system.update_score("Pexeso", self.calculate_score())
+                self.game_state = 3
+                self.save_system.update_score(f"Pexeso_{self.difficulty}", self.calculate_score())
                 if self.calculate_score() > self.highscore:
                     self.highscore = self.calculate_score()
     
@@ -279,13 +341,45 @@ class Pexeso(Game):
         self.screen.blit(self.bg, (0, 0))
         
         if self.game_state == 0:
-            self.draw_menu()
+            self.draw_difficulty_select()
         
         elif self.game_state == 1:
-            self.draw_game()
+            self.draw_menu()
         
         elif self.game_state == 2:
+            self.draw_game()
+        
+        elif self.game_state == 3:
             self.draw_win_screen()
+    
+    def draw_difficulty_select(self):
+        overlay = pygame.Surface((self.width, self.height))
+        overlay.set_alpha(200)
+        overlay.fill("black")
+        self.screen.blit(overlay, (0, 0))
+        
+        title = self.font_large.render("SELECT DIFFICULTY", True, "#16db65")
+        title_rect = title.get_rect(center=(self.center_x, self.center_y - 150))
+        self.screen.blit(title, title_rect)
+        
+        easy_color = "yellow" if self.selected_difficulty == 0 else "white"
+        easy_text = self.font_medium.render("EASY (4x4)", True, easy_color)
+        easy_rect = easy_text.get_rect(center=(self.center_x, self.center_y - 20))
+        self.screen.blit(easy_text, easy_rect)
+        
+        hard_color = "yellow" if self.selected_difficulty == 1 else "white"
+        hard_text = self.font_medium.render("HARD (6x6)", True, hard_color)
+        hard_rect = hard_text.get_rect(center=(self.center_x, self.center_y + 40))
+        self.screen.blit(hard_text, hard_rect)
+        
+        arrow = self.font_large.render(">", True, "yellow")
+        arrow_y = self.center_y - 20 if self.selected_difficulty == 0 else self.center_y + 40
+        arrow_rect = arrow.get_rect(center=(self.center_x - 200, arrow_y))
+        self.screen.blit(arrow, arrow_rect)
+        
+        instruction = self.font_small.render(f"Press '{self.button}' to select", True, "gray")
+        instruction_rect = instruction.get_rect(center=(self.center_x, self.center_y + 120))
+        self.screen.blit(instruction, instruction_rect)
     
     def draw_menu(self):
         overlay = pygame.Surface((self.width, self.height))
@@ -293,18 +387,22 @@ class Pexeso(Game):
         overlay.fill("black")
         self.screen.blit(overlay, (0, 0))
 
-        title = self.font_large.render("MEMORY - PEXESO", True, "#16db65")
+        title = self.font_large.render("MEMORY", True, "#16db65")
         title_rect = title.get_rect(center=(self.center_x, self.center_y - 100))
         self.screen.blit(title, title_rect)
         
         diff_text = f"Difficulty: {self.difficulty.upper()} ({self.grid_rows}x{self.grid_cols})"
         diff_surf = self.font_medium.render(diff_text, True, "yellow")
-        diff_rect = diff_surf.get_rect(center=(self.center_x, self.center_y))
+        diff_rect = diff_surf.get_rect(center=(self.center_x, self.center_y - 20))
         self.screen.blit(diff_surf, diff_rect)
+        
+        highscore_text = self.font_medium.render(f"Best Score: {self.highscore}", True, "#FFD700")
+        highscore_rect = highscore_text.get_rect(center=(self.center_x, self.center_y + 40))
+        self.screen.blit(highscore_text, highscore_rect)
         
         start_text = f"Press '{self.button}' to start"
         start_surf = self.font_medium.render(start_text, True, "white")
-        start_rect = start_surf.get_rect(center=(self.center_x, self.center_y + 80))
+        start_rect = start_surf.get_rect(center=(self.center_x, self.center_y + 120))
         self.screen.blit(start_surf, start_rect)
     
     def draw_game(self):
@@ -369,6 +467,4 @@ class Pexeso(Game):
 
 if __name__ == "__main__":
     pexeso = Pexeso(fullscreen=False, difficulty="easy")
-    # pexeso = Pexeso(fullscreen=False, difficulty="hard")
-    
     pexeso.run()
