@@ -43,11 +43,7 @@ class Snake:
     def check_collision(self, width, height, walls_enabled):
         head_x, head_y = self.body[0]
         
-        # Kolízia s vlastným telom
-        if (head_x, head_y) in self.body[1:]:
-            return True
-        
-        # Kolízia so stenami (iba ak sú zapnuté)
+        # Kolízia so stenami PRED kontrolou tela (musí byť prvá)
         if walls_enabled:
             if (head_x < 0 or head_x >= width or 
                 head_y < 0 or head_y >= height):
@@ -56,12 +52,20 @@ class Snake:
             # Teleportácia cez steny
             if head_x < 0:
                 self.body[0] = (width - self.cell_size, head_y)
+                head_x = self.body[0][0]
             elif head_x >= width:
                 self.body[0] = (0, head_y)
+                head_x = self.body[0][0]
             elif head_y < 0:
                 self.body[0] = (head_x, height - self.cell_size)
+                head_y = self.body[0][1]
             elif head_y >= height:
                 self.body[0] = (head_x, 0)
+                head_y = self.body[0][1]
+        
+        # Kolízia s vlastným telom (musí byť DRUHÁ, po teleportácii)
+        if (head_x, head_y) in self.body[1:]:
+            return True
         
         return False
     
@@ -126,11 +130,11 @@ class SnakeGame(Game):
         self.game_state = 0
         
         self.selected_difficulty = 0
-        self.difficulty = "medium"
+        self.difficulty = "easy"
         
         self.cell_size = 20
-        self.walls_enabled = True
-        self.game_speed = 10
+        self.walls_enabled = False  # Default pre Easy
+        self.move_delay = 15  # Default pre Easy
         
         self.snake = Snake(self.width // 2, self.height // 2, self.cell_size)
         self.food = Food(self.cell_size)
@@ -160,6 +164,19 @@ class SnakeGame(Game):
         self.food = Food(self.cell_size)
         self.food.spawn(self.snake.body, self.width, self.height)
         self.move_counter = 0
+        
+        # Znovu nastav nastavenia obtiažnosti (dôležité pri reštarte)
+        difficulties = {
+            "easy": (False, 15),
+            "medium": (False, 10),
+            "hard": (True, 10),
+            "extreme": (True, 5)
+        }
+        
+        if self.difficulty in difficulties:
+            diff_data = difficulties[self.difficulty]
+            self.walls_enabled = diff_data[0]
+            self.move_delay = diff_data[1]
     
     def handle_input(self):
         if self.game_state == 0:
@@ -171,16 +188,16 @@ class SnakeGame(Game):
             
             if self.i.just_pressed("A"):
                 difficulties = {
-                    0: ("easy", False, 7),      # walls OFF, pomalé
-                    1: ("medium", False, 10),   # walls OFF, stredné
-                    2: ("hard", True, 10),      # walls ON, stredné
-                    3: ("extreme", True, 15)    # walls ON, rýchle
+                    0: ("easy", False, 15),      # walls OFF, pomalé (vyššie číslo = pomalšie)
+                    1: ("medium", False, 10),    # walls OFF, stredné
+                    2: ("hard", True, 10),       # walls ON, stredné
+                    3: ("extreme", True, 5)      # walls ON, rýchle (nižšie číslo = rýchlejšie)
                 }
                 
                 diff_data = difficulties[self.selected_difficulty]
                 self.difficulty = diff_data[0]
                 self.walls_enabled = diff_data[1]
-                self.move_delay = diff_data[2]
+                self.move_delay = diff_data[2]  # TOTO JE DÔLEŽITÉ
                 
                 self.highscore = self.save_system.get_highscore(f"Snake_{self.difficulty}")
                 self.game_state = 1
@@ -216,13 +233,16 @@ class SnakeGame(Game):
                 self.move_counter = 0
                 self.snake.move()
                 
+                # Skontroluj kolíziu (vrátane teleportácie)
                 if self.snake.check_collision(self.width, self.height, self.walls_enabled):
                     self.game_state = 3
                     self.save_system.update_score(f"Snake_{self.difficulty}", self.score)
                     if self.score > self.highscore:
                         self.highscore = self.score
                 
-                if self.snake.body[0] == self.food.position:
+                # Kontrola jedla MUSÍ byť PO check_collision (kvôli teleportácii)
+                head_x, head_y = self.snake.body[0]
+                if (head_x, head_y) == self.food.position:
                     self.snake.grow_snake()
                     self.food.spawn(self.snake.body, self.width, self.height)
                     self.score += 10
@@ -367,12 +387,12 @@ class SnakeGame(Game):
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.running = False
-                    self.save_system.update_time(f"Snake_{self.difficulty}")
+                    self.save_system.update_time(f"Snake")
                 
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE:
                         self.running = False
-                        self.save_system.update_time(f"Snake_{self.difficulty}")
+                        self.save_system.update_time(f"Snake")
                         
                     if event.key == pygame.K_p:
                         self.paused = not self.paused       
