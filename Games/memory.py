@@ -101,7 +101,7 @@ class Pexeso(Game):
             fullscreen, 
             icon_path="Games/assets/images/pexeso/pexeso_icon.png",  # TODO: Doplň cestu
             title="Memory", 
-            game_name="Memory_easy"
+            game_name="Memory"
         )
         
         self.width = pygame.display.get_window_size()[0]

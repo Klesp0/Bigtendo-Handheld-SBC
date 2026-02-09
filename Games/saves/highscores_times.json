@@ -32,6 +32,7 @@
         "Tetris_normal": 0,
         "Tetris_hard": 0,
         "Tetris_insane": 0,
+        "Memory": 0,
         "Memory_easy": 0,
         "Memory_hard": 0,
         "SpaceInvaders": 0,

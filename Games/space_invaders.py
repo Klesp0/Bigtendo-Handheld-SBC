@@ -590,41 +590,6 @@ class SpaceInvaders(Game):
             record_surf = self.font_medium.render(record_text, True, "gold")
             record_rect = record_surf.get_rect(center=(self.center_x, self.center_y - 160))
             self.screen.blit(record_surf, record_rect)
-    
-    def run(self):
-        while self.running:
-            
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    self.running = False
-                    self.save_system.update_time(f"SpaceInvaders")
-                
-                if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_ESCAPE:
-                        self.running = False
-                        self.save_system.update_time(f"SpaceInvaders")
-                        
-                    if event.key == pygame.K_p:
-                        self.paused = not self.paused       
-            
-            if not self.paused:
-                self.handle_input()
-                self.update()
-            
-            self.draw()
-            
-            if self.paused:
-                self.pause()
-               
-            pygame.display.flip() 
-            self.clock.tick(FPS)
-            
-        
-        pygame.quit()
-        sys.exit()
-                   
-        return self.score
-
 
 if __name__ == "__main__":
     game = SpaceInvaders(fullscreen=False)
