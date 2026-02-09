@@ -99,7 +99,7 @@ class Pexeso(Game):
     def __init__(self, fullscreen=True, difficulty="easy"):
         super().__init__(
             fullscreen, 
-            icon_path="Games/assets/images/pexeso/pexeso_icon.png",  # TODO: Doplň cestu
+            icon_path="Games/assets/images/memory/memory_icon.png",  # TODO: Doplň cestu
             title="Memory", 
             game_name="Memory"
         )
