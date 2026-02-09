@@ -263,6 +263,9 @@ class Pexeso(Game):
                 self.game_state = 1
         
         elif self.game_state == 1:
+            if self.i.just_pressed("B"):
+                self.game_state = 0
+                
             if self.i.just_pressed("A"):
                 self.game_state = 2
                 self.start_time = time.time()

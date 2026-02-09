@@ -154,6 +154,9 @@ class Pong(Game):
                     self.game_state = 2
         
         elif self.game_state == 1:
+            if self.i.just_pressed("B"):
+                self.game_state = 0
+                
             if self.i.just_pressed("UP"):
                 self.selected_difficulty = (self.selected_difficulty - 1) % 4
             
@@ -167,6 +170,9 @@ class Pong(Game):
                 self.game_state = 2
         
         elif self.game_state == 2:
+            if self.i.just_pressed("B"):
+                self.game_state = 0
+                
             if self.i.just_pressed("A"):
                 self.game_state = 3
                 self.ball.reset()
