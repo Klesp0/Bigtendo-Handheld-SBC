@@ -7,7 +7,7 @@ from config import *
 
 
 class Card:
-    def __init__(self, x, y, card_type, card_id):
+    def __init__(self, x, y, card_type, card_id, width=100, height=100):
         self.x = x
         self.y = y
         self.card_type = card_type  
@@ -16,8 +16,8 @@ class Card:
         self.is_matched = False  
         self.flip_progress = 0.0  
         
-        self.width = 100
-        self.height = 100
+        self.width = width
+        self.height = height
         
         self.rect = pygame.Rect(self.x, self.y, self.width, self.height)
         
@@ -95,7 +95,7 @@ class Card:
             self.is_flipped = False
 
 
-class Pexeso(Game):
+class Memory(Game):
     def __init__(self, fullscreen=True, difficulty="easy"):
         super().__init__(
             fullscreen, 
@@ -115,9 +115,15 @@ class Pexeso(Game):
         if difficulty == "easy":
             self.grid_rows = 4
             self.grid_cols = 4
-        else:
+            self.card_width = 100
+            self.card_height = 100
+            self.card_spacing = 20
+        else:  # hard
             self.grid_rows = 6
             self.grid_cols = 6
+            self.card_width = 70
+            self.card_height = 70
+            self.card_spacing = 15
         
         self.total_pairs = (self.grid_rows * self.grid_cols) // 2
         
@@ -175,9 +181,8 @@ class Pexeso(Game):
         
         random.shuffle(card_pairs)
         
-        card_spacing = 20
-        total_grid_width = self.grid_cols * 100 + (self.grid_cols - 1) * card_spacing
-        total_grid_height = self.grid_rows * 100 + (self.grid_rows - 1) * card_spacing
+        total_grid_width = self.grid_cols * self.card_width + (self.grid_cols - 1) * self.card_spacing
+        total_grid_height = self.grid_rows * self.card_height + (self.grid_rows - 1) * self.card_spacing
         
         start_x = (self.width - total_grid_width) // 2
         start_y = (self.height - total_grid_height) // 2 + 30
@@ -185,11 +190,11 @@ class Pexeso(Game):
         card_id = 0
         for row in range(self.grid_rows):
             for col in range(self.grid_cols):
-                x = start_x + col * (100 + card_spacing)
-                y = start_y + row * (100 + card_spacing)
+                x = start_x + col * (self.card_width + self.card_spacing)
+                y = start_y + row * (self.card_height + self.card_spacing)
                 card_type = card_pairs[card_id]
                 
-                card = Card(x, y, card_type, card_id)
+                card = Card(x, y, card_type, card_id, self.card_width, self.card_height)
                 self.cards.append(card)
                 card_id += 1
     
@@ -237,10 +242,16 @@ class Pexeso(Game):
                     self.difficulty = "easy"
                     self.grid_rows = 4
                     self.grid_cols = 4
+                    self.card_width = 100
+                    self.card_height = 100
+                    self.card_spacing = 20
                 else:
                     self.difficulty = "hard"
                     self.grid_rows = 6
                     self.grid_cols = 6
+                    self.card_width = 70
+                    self.card_height = 70
+                    self.card_spacing = 15
                 
                 self.total_pairs = (self.grid_rows * self.grid_cols) // 2
                 
@@ -292,6 +303,7 @@ class Pexeso(Game):
                     self.select_card()
         
         elif self.game_state == 3:
+            if self.i.just_pressed("A"):
                 self.__init__(fullscreen=self.screen.get_flags() & pygame.FULLSCREEN, difficulty=self.difficulty)
     
     def select_card(self):
@@ -323,8 +335,6 @@ class Pexeso(Game):
             if self.matches_found == self.total_pairs:
                 self.game_state = 3
                 self.save_system.update_score(f"Memory_{self.difficulty}", self.calculate_score())
-                if self.calculate_score() > self.highscore:
-                    self.highscore = self.calculate_score()
     
     def check_match(self):
         if len(self.flipped_cards) == 2:
@@ -436,9 +446,6 @@ class Pexeso(Game):
             card.draw(self.screen, selected=(card == selected_card))
     
     def draw_win_screen(self):
-        for card in self.cards:
-            card.draw(self.screen)
-        
         overlay = pygame.Surface((self.width, self.height))
         overlay.set_alpha(200)
         overlay.fill("black")
@@ -474,8 +481,7 @@ class Pexeso(Game):
             record_surf = self.font_medium.render(record_text, True, "red")
             record_rect = record_surf.get_rect(center=(self.center_x, self.center_y - 150))
             self.screen.blit(record_surf, record_rect)
-
-
+        
 if __name__ == "__main__":
-    pexeso = Pexeso(fullscreen=False, difficulty="easy")
-    pexeso.run()
+    memory = Memory(fullscreen=False, difficulty="easy")
+    memory.run()
