@@ -1,596 +1,635 @@
-import pygame
-import random
-import sys
+import pygame, sys
+from random import choice, randint
 from _game_base import Game
 from _input_handler import InputHandler
+from _save_system import SaveSystem
 from config import *
 
 
-class Player:
-    def __init__(self, x, y):
-        self.speed = 300
-        self.shoot_cooldown = 0
-        self.shoot_delay = 0.5
-        
-        # TODO: Načítaj obrázok
-        # self.surf = pygame.image.load("Games/assets/images/space_invaders/player_ship.png")
-        # self.surf = pygame.transform.scale(self.surf, (60, 40))
-        
-        self.surf = pygame.Surface((60, 40))
-        self.surf.fill("cyan")
-        
-        self.rect = self.surf.get_rect(midbottom=(x, y))
-    
-    def move(self, dx, dt, screen_width):
-        self.rect.x += dx * self.speed * dt
-        
-        if self.rect.left < 0:
-            self.rect.left = 0
-        elif self.rect.right > screen_width:
-            self.rect.right = screen_width
-    
-    def can_shoot(self, dt):
-        self.shoot_cooldown -= dt
-        if self.shoot_cooldown <= 0:
-            self.shoot_cooldown = self.shoot_delay
-            return True
-        return False
-    
-    def draw(self, screen):
-        screen.blit(self.surf, self.rect)
+class Alien(pygame.sprite.Sprite):
+	def __init__(self,color,x,y):
+		super().__init__()
+		file_path = 'Games/assets/images/space_invaders/' + color + '.png'
+		self.image = pygame.image.load(file_path).convert_alpha()
+		self.rect = self.image.get_rect(topleft = (x,y))
+
+		if color == 'red': self.value = 100
+		elif color == 'green': self.value = 200
+		else: self.value = 300
+
+	def update(self,direction):
+		self.rect.x += direction
 
 
-class Bullet:
-    def __init__(self, x, y, speed, is_player):
-        self.speed = speed
-        self.is_player = is_player
-        
-        # TODO: Načítaj obrázok
-        # self.surf = pygame.image.load(f"Games/assets/images/space_invaders/bullet_{'player' if is_player else 'alien'}.png")
-        
-        self.surf = pygame.Surface((8, 20))
-        self.surf.fill("yellow" if is_player else "red")
-        
-        self.rect = self.surf.get_rect(center=(x, y))
-    
-    def update(self, dt):
-        self.rect.y += self.speed * dt
-    
-    def is_off_screen(self, screen_height):
-        return self.rect.bottom < 0 or self.rect.top > screen_height
-    
-    def draw(self, screen):
-        screen.blit(self.surf, self.rect)
+class Extra(pygame.sprite.Sprite):
+	def __init__(self,side,screen_width):
+		super().__init__()
+		self.image = pygame.image.load('Games/assets/images/space_invaders/extra.png').convert_alpha()
+		
+		if side == 'right':
+			x = screen_width + 50
+			self.speed = - 3
+		else:
+			x = -50
+			self.speed = 3
+
+		self.rect = self.image.get_rect(topleft = (x,80))
+
+	def update(self):
+		self.rect.x += self.speed
 
 
-class Alien:
-    def __init__(self, x, y, alien_type):
-        self.alien_type = alien_type
-        self.animation_frame = 0
-        self.animation_timer = 0
-        self.animation_speed = 0.5
-        
-        # TODO: Načítaj animované obrázky
-        # self.frames = [
-        #     pygame.image.load(f"Games/assets/images/space_invaders/alien_{alien_type}_1.png"),
-        #     pygame.image.load(f"Games/assets/images/space_invaders/alien_{alien_type}_2.png")
-        # ]
-        
-        colors = {1: "red", 2: "green", 3: "purple"}
-        self.surf = pygame.Surface((40, 40))
-        self.surf.fill(colors.get(alien_type, "white"))
-        
-        self.rect = self.surf.get_rect(topleft=(x, y))
-        
-        # Bodové hodnoty
-        self.points = {1: 30, 2: 20, 3: 10}[alien_type]
-    
-    def update_animation(self, dt):
-        self.animation_timer += dt
-        if self.animation_timer >= self.animation_speed:
-            self.animation_timer = 0
-            self.animation_frame = (self.animation_frame + 1) % 2
-    
-    def draw(self, screen):
-        screen.blit(self.surf, self.rect)
+class Laser(pygame.sprite.Sprite):
+	def __init__(self,pos,speed,screen_height):
+		super().__init__()
+		self.image = pygame.Surface((4,20))
+		self.image.fill('white')
+		self.rect = self.image.get_rect(center = pos)
+		self.speed = speed
+		self.height_y_constraint = screen_height
+
+	def destroy(self):
+		if self.rect.y <= -50 or self.rect.y >= self.height_y_constraint + 50:
+			self.kill()
+
+	def update(self):
+		self.rect.y += self.speed
+		self.destroy()
 
 
-class AlienGrid:
-    def __init__(self, start_x, start_y):
-        self.aliens = []
-        self.direction = 1
-        self.speed = 50
-        self.move_down_amount = 20
-        self.shoot_timer = 0
-        self.shoot_delay = 1.5
-        
-        # Vytvor 5 radov, 11 stĺpcov
-        for row in range(5):
-            alien_type = 1 if row < 1 else (2 if row < 3 else 3)
-            for col in range(11):
-                x = start_x + col * 50
-                y = start_y + row * 45
-                alien = Alien(x, y, alien_type)
-                self.aliens.append(alien)
-    
-    def update(self, dt, screen_width):
-        if not self.aliens:
-            return
-        
-        # Rýchlosť sa zvyšuje s počtom mŕtvych aliens
-        speed_multiplier = 1 + (55 - len(self.aliens)) * 0.05
-        
-        # Animácia aliens
-        for alien in self.aliens:
-            alien.update_animation(dt)
-        
-        # Pohyb celej mriežky
-        move_amount = self.direction * self.speed * speed_multiplier * dt
-        
-        for alien in self.aliens:
-            alien.rect.x += move_amount
-        
-        # Kontrola okrajov
-        hit_edge = False
-        for alien in self.aliens:
-            if alien.rect.left <= 0 or alien.rect.right >= screen_width:
-                hit_edge = True
-                break
-        
-        if hit_edge:
-            self.direction *= -1
-            for alien in self.aliens:
-                alien.rect.y += self.move_down_amount
-    
-    def get_random_shooter(self):
-        if not self.aliens:
-            return None
-        
-        # Vyber náhodného aliena z najnižších v každom stĺpci
-        columns = {}
-        for alien in self.aliens:
-            col = alien.rect.centerx // 50
-            if col not in columns or alien.rect.y > columns[col].rect.y:
-                columns[col] = alien
-        
-        shooters = list(columns.values())
-        return random.choice(shooters) if shooters else None
-    
-    def lowest_alien_y(self):
-        if not self.aliens:
-            return 0
-        return max(alien.rect.bottom for alien in self.aliens)
-    
-    def draw(self, screen):
-        for alien in self.aliens:
-            alien.draw(screen)
+class Block(pygame.sprite.Sprite):
+	def __init__(self,size,color,x,y):
+		super().__init__()
+		self.image = pygame.Surface((size,size))
+		self.image.fill(color)
+		self.rect = self.image.get_rect(topleft = (x,y))
 
 
-class Shield:
-    def __init__(self, x, y):
-        self.health = 4
-        
-        # TODO: Načítaj obrázky pre rôzne stavy poškodenia
-        # self.images = [
-        #     pygame.image.load(f"Games/assets/images/space_invaders/shield_{i}.png")
-        #     for i in range(5)
-        # ]
-        
-        self.surf = pygame.Surface((80, 60))
-        self.surf.fill("green")
-        
-        self.rect = self.surf.get_rect(topleft=(x, y))
-    
-    def take_damage(self):
-        self.health -= 1
-        return self.health <= 0
-    
-    def draw(self, screen):
-        if self.health > 0:
-            # Farba podľa zdravia
-            colors = ["darkgreen", "green", "yellow", "orange", "red"]
-            self.surf.fill(colors[4 - self.health])
-            screen.blit(self.surf, self.rect)
+shape = [
+'  xxxxxxx',
+' xxxxxxxxx',
+'xxxxxxxxxxx',
+'xxxxxxxxxxx',
+'xxxxxxxxxxx',
+'xxx     xxx',
+'xx       xx']
 
 
-class UFO:
-    def __init__(self, screen_width):
-        self.speed = 150
-        self.active = False
-        self.spawn_timer = random.uniform(15, 25)
-        
-        # TODO: Načítaj obrázok
-        # self.surf = pygame.image.load("Games/assets/images/space_invaders/ufo.png")
-        
-        self.surf = pygame.Surface((60, 30))
-        self.surf.fill("magenta")
-        
-        self.rect = self.surf.get_rect(topleft=(-70, 50))
-        self.points = random.choice([50, 100, 150, 200, 300])
-    
-    def update(self, dt, screen_width):
-        if not self.active:
-            self.spawn_timer -= dt
-            if self.spawn_timer <= 0:
-                self.active = True
-                self.rect.topleft = (-70, 50)
-                self.points = random.choice([50, 100, 150, 200, 300])
-        else:
-            self.rect.x += self.speed * dt
-            if self.rect.left > screen_width:
-                self.active = False
-                self.spawn_timer = random.uniform(15, 25)
-    
-    def draw(self, screen):
-        if self.active:
-            screen.blit(self.surf, self.rect)
+class Player(pygame.sprite.Sprite):
+	def __init__(self, pos, constraint, speed, input_handler):
+		super().__init__()
+		self.image = pygame.image.load('Games/assets/images/space_invaders/player.png').convert_alpha()
+		self.rect = self.image.get_rect(midbottom = pos)
+		self.speed = speed
+		self.max_x_constraint = constraint
+		self.ready = True
+		self.laser_time = 0
+		self.laser_cooldown = 600
+		self.input_handler = input_handler
+
+		self.lasers = pygame.sprite.Group()
+
+		self.laser_sound = pygame.mixer.Sound('Games/assets/sounds/laser.wav')
+		self.laser_sound.set_volume(0.5)
+
+	def get_input(self):
+		if self.input_handler.is_pressed("RIGHT"):
+			self.rect.x += self.speed
+		elif self.input_handler.is_pressed("LEFT"):
+			self.rect.x -= self.speed
+
+		if self.input_handler.just_pressed("A") and self.ready:
+			self.shoot_laser()
+			self.ready = False
+			self.laser_time = pygame.time.get_ticks()
+			self.laser_sound.play()
+
+	def recharge(self):
+		if not self.ready:
+			current_time = pygame.time.get_ticks()
+			if current_time - self.laser_time >= self.laser_cooldown:
+				self.ready = True
+
+	def constraint(self):
+		if self.rect.left <= 0:
+			self.rect.left = 0
+		if self.rect.right >= self.max_x_constraint:
+			self.rect.right = self.max_x_constraint
+
+	def shoot_laser(self):
+		self.lasers.add(Laser(self.rect.center,-8,self.rect.bottom))
+
+	def update(self):
+		self.get_input()
+		self.constraint()
+		self.recharge()
+		self.lasers.update()
 
 
 class SpaceInvaders(Game):
-    def __init__(self, fullscreen=True):
-        super().__init__(
-            fullscreen,
-            icon_path="Games/assets/images/space_invaders/space_invaders_icon.png",
-            title="Space Invaders",
-            game_name="SpaceInvaders"
-        )
-        
-        self.width = pygame.display.get_window_size()[0]
-        self.height = pygame.display.get_window_size()[1]
-        self.center_x = self.width / 2
-        self.center_y = self.height / 2
-        
-        self.i = InputHandler()
-        
-        # 0=difficulty select, 1=game menu, 2=playing, 3=game over
-        self.game_state = 0
-        
-        self.selected_difficulty = 0
-        self.difficulty = "normal"
-        self.lives = 3
-        self.wave = 1
-        
-        self.player = Player(self.center_x, self.height - 60)
-        self.alien_grid = AlienGrid(100, 80)
-        self.bullets = []
-        self.shields = []
-        self.ufo = UFO(self.width)
-        
-        self.alien_shoot_timer = 0
-        self.alien_shoot_delay = 1.5
-        
-        self.create_shields()
-        
-        self.font_large = pygame.font.Font("Games/assets/fonts/Pixeltype.ttf", 60)
-        self.font_medium = pygame.font.Font("Games/assets/fonts/Pixeltype.ttf", 50)
-        self.font_small = pygame.font.Font("Games/assets/fonts/Pixeltype.ttf", 40)
-        
-        # TODO: Načítaj pozadie
-        # self.bg = pygame.image.load("Games/assets/images/space_invaders/starfield.png")
-        # self.bg = pygame.transform.scale(self.bg, (self.width, self.height))
-        
-        self.bg = pygame.Surface((self.width, self.height))
-        self.bg.fill("#0a0a1e")
-        
-        if self.i.GPIO1 and GPIO_ENABLED and self.i.GPIO:
-            self.button = "A"
-        else:
-            self.button = "SPACE"
-    
-    def create_shields(self):
-        self.shields = []
-        shield_y = self.height - 150
-        spacing = self.width // 5
-        
-        for i in range(4):
-            x = spacing * (i + 1) - 40
-            shield = Shield(x, shield_y)
-            self.shields.append(shield)
-    
-    def reset_game(self):
-        self.score = 0
-        self.wave = 1
-        
-        # Lives podľa obtiažnosti
-        difficulties = {
-            "easy": 5,
-            "normal": 3,
-            "hard": 2,
-            "impossible": 1
-        }
-        self.lives = difficulties.get(self.difficulty, 3)
-        
-        self.player = Player(self.center_x, self.height - 60)
-        self.alien_grid = AlienGrid(100, 80)
-        self.bullets = []
-        self.ufo = UFO(self.width)
-        self.create_shields()
-        
-        # Nastavenie alien shoot delay podľa obtiažnosti
-        delays = {
-            "easy": 2.0,
-            "normal": 1.5,
-            "hard": 1.0,
-            "impossible": 0.5
-        }
-        self.alien_shoot_delay = delays.get(self.difficulty, 1.5)
-    
-    def next_wave(self):
-        self.wave += 1
-        self.alien_grid = AlienGrid(100, 80)
-        self.bullets = []
-        self.player = Player(self.center_x, self.height - 60)
-        
-        # Štíty sa obnovia každú druhú vlnu
-        if self.wave % 2 == 1:
-            self.create_shields()
-    
-    def handle_input(self):
-        if self.game_state == 0:
-            if self.i.just_pressed("UP"):
-                self.selected_difficulty = (self.selected_difficulty - 1) % 4
-            
-            if self.i.just_pressed("DOWN"):
-                self.selected_difficulty = (self.selected_difficulty + 1) % 4
-            
-            if self.i.just_pressed("A"):
-                difficulties = ["easy", "normal", "hard", "impossible"]
-                self.difficulty = difficulties[self.selected_difficulty]
-                self.highscore = self.save_system.get_highscore(f"SpaceInvaders_{self.difficulty}")
-                self.game_state = 1
-        
-        elif self.game_state == 1:
-            # BACK - návrat na difficulty select
-            if self.i.just_pressed("B"):
-                self.game_state = 0
-            
-            if self.i.just_pressed("A"):
-                self.reset_game()
-                self.game_state = 2
-        
-        elif self.game_state == 2:
-            dt = self.clock.get_time() / 1000.0
-            
-            if self.i.is_pressed("LEFT"):
-                self.player.move(-1, dt, self.width)
-            elif self.i.is_pressed("RIGHT"):
-                self.player.move(1, dt, self.width)
-            
-            if self.i.just_pressed("A"):
-                if self.player.can_shoot(dt):
-                    bullet = Bullet(self.player.rect.centerx, self.player.rect.top, -400, True)
-                    self.bullets.append(bullet)
-        
-        elif self.game_state == 3:
-            if self.i.just_pressed("A"):
-                self.__init__(fullscreen=self.screen.get_flags() & pygame.FULLSCREEN)
-    
-    def update(self):
-        if self.game_state == 2:
-            dt = self.clock.get_time() / 1000.0
-            dt = max(0.001, min(0.1, dt))
-            
-            # Aktualizuj hráča
-            self.player.shoot_cooldown = max(0, self.player.shoot_cooldown - dt)
-            
-            # Aktualizuj alien grid
-            self.alien_grid.update(dt, self.width)
-            
-            # Aktualizuj UFO
-            self.ufo.update(dt, self.width)
-            
-            # Aktualizuj bullets
-            bullets_to_remove = []
-            for bullet in self.bullets:
-                bullet.update(dt)
-                
-                if bullet.is_off_screen(self.height):
-                    bullets_to_remove.append(bullet)
-                    continue
-                
-                # Kolízia s aliens
-                if bullet.is_player:
-                    for alien in self.alien_grid.aliens[:]:
-                        if bullet.rect.colliderect(alien.rect):
-                            self.score += alien.points
-                            self.alien_grid.aliens.remove(alien)
-                            bullets_to_remove.append(bullet)
-                            break
-                    
-                    # Kolízia s UFO
-                    if self.ufo.active and bullet.rect.colliderect(self.ufo.rect):
-                        self.score += self.ufo.points
-                        self.ufo.active = False
-                        self.ufo.spawn_timer = random.uniform(15, 25)
-                        bullets_to_remove.append(bullet)
-                
-                # Kolízia so štítmi
-                for shield in self.shields[:]:
-                    if bullet.rect.colliderect(shield.rect) and shield.health > 0:
-                        if shield.take_damage():
-                            self.shields.remove(shield)
-                        bullets_to_remove.append(bullet)
-                        break
-                
-                # Kolízia s hráčom (alien bullets)
-                if not bullet.is_player and bullet.rect.colliderect(self.player.rect):
-                    self.lives -= 1
-                    bullets_to_remove.append(bullet)
-                    
-                    if self.lives <= 0:
-                        self.game_state = 3
-                        self.save_system.update_score(f"SpaceInvaders_{self.difficulty}", self.score)
-                        if self.score > self.highscore:
-                            self.highscore = self.score
-            
-            for bullet in bullets_to_remove:
-                if bullet in self.bullets:
-                    self.bullets.remove(bullet)
-            
-            # Alien shooting
-            self.alien_shoot_timer += dt
-            if self.alien_shoot_timer >= self.alien_shoot_delay:
-                self.alien_shoot_timer = 0
-                shooter = self.alien_grid.get_random_shooter()
-                if shooter:
-                    bullet = Bullet(shooter.rect.centerx, shooter.rect.bottom, 300, False)
-                    self.bullets.append(bullet)
-            
-            # Kontrola výhry (všetci aliens mŕtvi)
-            if not self.alien_grid.aliens:
-                self.next_wave()
-            
-            # Kontrola prehry (aliens dosiahli dno)
-            if self.alien_grid.lowest_alien_y() >= self.player.rect.top:
-                self.lives = 0
-                self.game_state = 3
-                self.save_system.update_score(f"SpaceInvaders_{self.difficulty}", self.score)
-                if self.score > self.highscore:
-                    self.highscore = self.score
-    
-    def draw(self):
-        self.screen.blit(self.bg, (0, 0))
-        
-        if self.game_state == 0:
-            self.draw_difficulty_select()
-        
-        elif self.game_state == 1:
-            self.draw_game_menu()
-        
-        elif self.game_state == 2:
-            self.draw_game()
-        
-        elif self.game_state == 3:
-            self.draw_game_over()
-    
-    def draw_difficulty_select(self):
-        overlay = pygame.Surface((self.width, self.height))
-        overlay.set_alpha(200)
-        overlay.fill("black")
-        self.screen.blit(overlay, (0, 0))
-        
-        title = self.font_large.render("SELECT DIFFICULTY", True, "#16db65")
-        title_rect = title.get_rect(center=(self.center_x, self.center_y - 200))
-        self.screen.blit(title, title_rect)
-        
-        difficulties = [
-            ("EASY (5 Lives)", 0),
-            ("NORMAL (3 Lives)", 1),
-            ("HARD (2 Lives)", 2),
-            ("IMPOSSIBLE (1 Life)", 3)
-        ]
-        
-        for diff_name, diff_index in difficulties:
-            color = "yellow" if self.selected_difficulty == diff_index else "white"
-            y_pos = self.center_y - 80 + (diff_index * 50)
-            
-            diff_text = self.font_medium.render(diff_name, True, color)
-            diff_rect = diff_text.get_rect(center=(self.center_x, y_pos))
-            self.screen.blit(diff_text, diff_rect)
-        
-        arrow = self.font_large.render(">", True, "yellow")
-        arrow_y = self.center_y - 80 + (self.selected_difficulty * 50)
-        arrow_rect = arrow.get_rect(center=(self.center_x - 280, arrow_y))
-        self.screen.blit(arrow, arrow_rect)
-        
-        instruction = self.font_small.render(f"Press '{self.button}' to select", True, "gray")
-        instruction_rect = instruction.get_rect(center=(self.center_x, self.center_y + 150))
-        self.screen.blit(instruction, instruction_rect)
-    
-    def draw_game_menu(self):
-        overlay = pygame.Surface((self.width, self.height))
-        overlay.set_alpha(200)
-        overlay.fill("black")
-        self.screen.blit(overlay, (0, 0))
-        
-        title = self.font_large.render("SPACE INVADERS", True, "white")
-        title_rect = title.get_rect(center=(self.center_x, self.center_y - 100))
-        self.screen.blit(title, title_rect)
-        
-        diff_text = f"Difficulty: {self.difficulty.upper()}"
-        diff_surf = self.font_medium.render(diff_text, True, "yellow")
-        diff_rect = diff_surf.get_rect(center=(self.center_x, self.center_y - 20))
-        self.screen.blit(diff_surf, diff_rect)
-        
-        highscore_text = self.font_medium.render(f"Best Score: {self.highscore}", True, "#FFD700")
-        highscore_rect = highscore_text.get_rect(center=(self.center_x, self.center_y + 40))
-        self.screen.blit(highscore_text, highscore_rect)
-        
-        start_text = f"Press '{self.button}' to start"
-        start_surf = self.font_medium.render(start_text, True, "white")
-        start_rect = start_surf.get_rect(center=(self.center_x, self.center_y + 120))
-        self.screen.blit(start_surf, start_rect)
-        
-        # Nápis pre návrat späť
-        back_text = "Press 'B' to go back"
-        back_surf = self.font_small.render(back_text, True, "gray")
-        back_rect = back_surf.get_rect(center=(self.center_x, self.center_y + 180))
-        self.screen.blit(back_surf, back_rect)
-    
-    def draw_game(self):
-        self.player.draw(self.screen)
-        self.alien_grid.draw(self.screen)
-        self.ufo.draw(self.screen)
-        
-        for bullet in self.bullets:
-            bullet.draw(self.screen)
-        
-        for shield in self.shields:
-            shield.draw(self.screen)
-        
-        # HUD
-        score_surf = self.font_medium.render(f"Score: {self.score}", True, "white")
-        self.screen.blit(score_surf, (20, 20))
-        
-        lives_surf = self.font_small.render(f"Lives: {self.lives}", True, "red")
-        self.screen.blit(lives_surf, (20, 70))
-        
-        wave_surf = self.font_small.render(f"Wave: {self.wave}", True, "cyan")
-        self.screen.blit(wave_surf, (self.width - 200, 20))
-        
-        highscore_surf = self.font_small.render(f"Best: {self.highscore}", True, "gold")
-        self.screen.blit(highscore_surf, (self.width - 200, 70))
-    
-    def draw_game_over(self):
-        self.player.draw(self.screen)
-        self.alien_grid.draw(self.screen)
-        
-        for bullet in self.bullets:
-            bullet.draw(self.screen)
-        
-        for shield in self.shields:
-            shield.draw(self.screen)
-        
-        overlay = pygame.Surface((self.width, self.height))
-        overlay.set_alpha(200)
-        overlay.fill("black")
-        self.screen.blit(overlay, (0, 0))
-        
-        game_over_text = self.font_large.render("GAME OVER", True, "red")
-        game_over_rect = game_over_text.get_rect(center=(self.center_x, self.center_y - 100))
-        self.screen.blit(game_over_text, game_over_rect)
-        
-        score_text = f"Your Score: {self.score}"
-        score_surf = self.font_medium.render(score_text, True, "white")
-        score_rect = score_surf.get_rect(center=(self.center_x, self.center_y - 20))
-        self.screen.blit(score_surf, score_rect)
-        
-        wave_text = f"Waves Survived: {self.wave}"
-        wave_surf = self.font_medium.render(wave_text, True, "white")
-        wave_rect = wave_surf.get_rect(center=(self.center_x, self.center_y + 30))
-        self.screen.blit(wave_surf, wave_rect)
-        
-        restart_text = f"Press '{self.button}' to restart"
-        restart_surf = self.font_medium.render(restart_text, True, "#16db65")
-        restart_rect = restart_surf.get_rect(center=(self.center_x, self.center_y + 120))
-        self.screen.blit(restart_surf, restart_rect)
-        
-        if self.score > self.highscore:
-            record_text = "NEW RECORD!"
-            record_surf = self.font_medium.render(record_text, True, "gold")
-            record_rect = record_surf.get_rect(center=(self.center_x, self.center_y - 160))
-            self.screen.blit(record_surf, record_rect)
+	def __init__(self, fullscreen=False, difficulty="normal"):
+		super().__init__(
+			fullscreen=fullscreen,
+			title="Space Invaders",
+			icon_path='Games/assets/images/space_invaders/space_invaders_icon.png',
+			game_name="SpaceInvaders"
+		)
+		
+		self.width = WIDTH
+		self.height = HEIGHT
+		self.center_x = self.width / 2
+		self.center_y = self.height / 2
+		
+		self.i = InputHandler()
+		
+		# Game states: 0=difficulty, 1=menu, 2=playing, 3=game_over, 4=victory
+		self.game_state = 0
+		
+		# Alien laser timer - musí byť definovaný PRED setup_difficulty()
+		self.ALIENLASER = pygame.USEREVENT + 1
+		
+		# Difficulty
+		self.difficulty = difficulty
+		self.selected_difficulty = 1  # 0=easy, 1=normal, 2=hard
+		self.setup_difficulty()
+		
+		# Fonty
+		self.font_small = pygame.font.Font('Games/assets/fonts/Pixeltype.ttf', 20)
+		self.font_medium = pygame.font.Font('Games/assets/fonts/Pixeltype.ttf', 30)
+		self.font_large = pygame.font.Font('Games/assets/fonts/Pixeltype.ttf', 60)
+		
+		# Audio
+		self.music = pygame.mixer.Sound('Games/assets/sounds/music.wav')
+		self.music.set_volume(0.2)
+		self.laser_sound = pygame.mixer.Sound('Games/assets/sounds/laser.wav')
+		self.laser_sound.set_volume(0.5)
+		self.explosion_sound = pygame.mixer.Sound('Games/assets/sounds/explosion.wav')
+		self.explosion_sound.set_volume(0.3)
+		
+		# CRT effect
+		self.crt = CRT(self.width, self.height)
+		
+		# Background
+		self.bg = pygame.Surface((self.width, self.height))
+		self.bg.fill((30,30,30))
+		
+		# Button text
+		if self.i.GPIO1 and GPIO_ENABLED and self.i.GPIO:
+			self.button = "A"
+		else:
+			self.button = "SPACE"
+		
+		# Inicializácia hry
+		self.init_game()
 
-if __name__ == "__main__":
-    game = SpaceInvaders(fullscreen=False)
-    game.run()
+	def setup_difficulty(self):
+		"""Nastaví parametre podľa obtiažnosti"""
+		if self.difficulty == "easy":
+			self.alien_speed = 2
+			self.starting_lives = 5
+			self.alien_shoot_interval = 1200
+		elif self.difficulty == "normal":
+			self.alien_speed = 3
+			self.starting_lives = 3
+			self.alien_shoot_interval = 800
+		else:  # hard
+			self.alien_speed = 5
+			self.starting_lives = 2
+			self.alien_shoot_interval = 600
+		
+		# Update timer
+		pygame.time.set_timer(self.ALIENLASER, self.alien_shoot_interval)
+
+	def init_game(self):
+		"""Inicializuje/resetuje herné objekty"""
+		player_sprite = Player((self.center_x, self.height), self.width, 5, self.i)
+		self.player = pygame.sprite.GroupSingle(player_sprite)
+
+		self.lives = self.starting_lives
+		self.live_surf = pygame.image.load('Games/assets/images/space_invaders/player.png').convert_alpha()
+		self.live_x_start_pos = self.width - (self.live_surf.get_size()[0] * 2 + 20)
+		
+		self.score = 0
+		self._score_saved = False
+
+		# Obstacles
+		self.shape = shape
+		self.block_size = 6
+		self.blocks = pygame.sprite.Group()
+		self.obstacle_amount = 4
+		self.obstacle_x_positions = [num * (self.width / self.obstacle_amount) for num in range(self.obstacle_amount)]
+		self.create_multiple_obstacles(*self.obstacle_x_positions, x_start = self.width / 15, y_start = 480)
+
+		# Aliens
+		self.aliens = pygame.sprite.Group()
+		self.alien_lasers = pygame.sprite.Group()
+		self.alien_setup(rows = 6, cols = 8)
+		self.alien_direction = self.alien_speed
+
+		# Extra
+		self.extra = pygame.sprite.GroupSingle()
+		self.extra_spawn_time = randint(40,80)
+
+	def create_obstacle(self, x_start, y_start, offset_x):
+		for row_index, row in enumerate(self.shape):
+			for col_index, col in enumerate(row):
+				if col == 'x':
+					x = x_start + col_index * self.block_size + offset_x
+					y = y_start + row_index * self.block_size
+					block = Block(self.block_size,(241,79,80),x,y)
+					self.blocks.add(block)
+
+	def create_multiple_obstacles(self, *offset, x_start, y_start):
+		for offset_x in offset:
+			self.create_obstacle(x_start, y_start, offset_x)
+
+	def alien_setup(self, rows, cols, x_distance = 60, y_distance = 48, x_offset = 70, y_offset = 100):
+		for row_index, row in enumerate(range(rows)):
+			for col_index, col in enumerate(range(cols)):
+				x = col_index * x_distance + x_offset
+				y = row_index * y_distance + y_offset
+				
+				if row_index == 0: alien_sprite = Alien('yellow',x,y)
+				elif 1 <= row_index <= 2: alien_sprite = Alien('green',x,y)
+				else: alien_sprite = Alien('red',x,y)
+				self.aliens.add(alien_sprite)
+
+	def alien_position_checker(self):
+		all_aliens = self.aliens.sprites()
+		for alien in all_aliens:
+			if alien.rect.right >= self.width:
+				self.alien_direction = -self.alien_speed
+				self.alien_move_down(4)
+			elif alien.rect.left <= 0:
+				self.alien_direction = self.alien_speed
+				self.alien_move_down(4)
+
+	def alien_move_down(self, distance):
+		if self.aliens:
+			for alien in self.aliens.sprites():
+				alien.rect.y += distance
+
+	def alien_shoot(self):
+		if self.aliens.sprites():
+			random_alien = choice(self.aliens.sprites())
+			laser_sprite = Laser(random_alien.rect.center, 6, self.height)
+			self.alien_lasers.add(laser_sprite)
+			self.laser_sound.play()
+
+	def extra_alien_timer(self):
+		self.extra_spawn_time -= 1
+		if self.extra_spawn_time <= 0:
+			self.extra.add(Extra(choice(['right','left']), self.width))
+			self.extra_spawn_time = randint(400,800)
+
+	def collision_checks(self):
+		# Player lasers 
+		if self.player.sprite.lasers:
+			for laser in self.player.sprite.lasers:
+				if pygame.sprite.spritecollide(laser, self.blocks, True):
+					laser.kill()
+
+				aliens_hit = pygame.sprite.spritecollide(laser, self.aliens, True)
+				if aliens_hit:
+					for alien in aliens_hit:
+						self.score += alien.value
+					laser.kill()
+					self.explosion_sound.play()
+
+				if pygame.sprite.spritecollide(laser, self.extra, True):
+					self.score += 500
+					laser.kill()
+
+		# Alien lasers 
+		if self.alien_lasers:
+			for laser in self.alien_lasers:
+				if pygame.sprite.spritecollide(laser, self.blocks, True):
+					laser.kill()
+
+				if pygame.sprite.spritecollide(laser, self.player, False):
+					laser.kill()
+					self.lives -= 1
+					if self.lives <= 0:
+						self.game_state = 3
+						self.music.stop()
+
+		# Aliens
+		if self.aliens:
+			for alien in self.aliens:
+				pygame.sprite.spritecollide(alien, self.blocks, True)
+
+				if pygame.sprite.spritecollide(alien, self.player, False):
+					self.game_state = 3
+					self.music.stop()
+
+	def handle_input(self):
+		"""Spracovanie vstupov podľa game state"""
+		# Event handling pre alien laser
+		for event in pygame.event.get():
+			if event.type == self.ALIENLASER and self.game_state == 2:
+				self.alien_shoot()
+		
+		if self.game_state == 0:  # Difficulty select
+			if self.i.just_pressed("UP"):
+				self.selected_difficulty = (self.selected_difficulty - 1) % 3
+			
+			if self.i.just_pressed("DOWN"):
+				self.selected_difficulty = (self.selected_difficulty + 1) % 3
+			
+			if self.i.just_pressed("A"):
+				if self.selected_difficulty == 0:
+					self.difficulty = "easy"
+				elif self.selected_difficulty == 1:
+					self.difficulty = "normal"
+				else:
+					self.difficulty = "hard"
+				
+				self.setup_difficulty()
+				self.init_game()
+				self.highscore = self.save_system.get_highscore(f"SpaceInvaders_{self.difficulty}")
+				self.game_state = 1
+		
+		elif self.game_state == 1:  # Menu
+			if self.i.just_pressed("B"):
+				self.game_state = 0
+			
+			if self.i.just_pressed("A"):
+				self.game_state = 2
+				self.music.play(loops = -1)
+		
+		elif self.game_state == 2:  # Playing
+			pass  # Player input je spracovaný v Player.update()
+		
+		elif self.game_state == 3 or self.game_state == 4:  # Game Over / Victory
+			if self.i.just_pressed("A"):
+				self.game_state = 0
+				self._score_saved = False
+
+	def update(self):
+		"""Aktualizácia hernej logiky"""
+		if self.game_state == 2:
+			self.player.update()
+			self.alien_lasers.update()
+			self.extra.update()
+			
+			self.aliens.update(self.alien_direction)
+			self.alien_position_checker()
+			self.extra_alien_timer()
+			self.collision_checks()
+			
+			# Victory check
+			if not self.aliens.sprites():
+				self.game_state = 4
+				self.music.stop()
+				self.save_system.update_score(f"SpaceInvaders_{self.difficulty}", self.score)
+
+	def draw(self):
+		"""Vykreslenie podľa game state"""
+		if self.game_state == 0:
+			self.draw_difficulty_select()
+		
+		elif self.game_state == 1:
+			self.draw_menu()
+		
+		elif self.game_state == 2:
+			self.draw_game()
+		
+		elif self.game_state == 3:
+			self.draw_game_over()
+		
+		elif self.game_state == 4:
+			self.draw_victory()
+	
+	def draw_difficulty_select(self):
+		"""Výber obtiažnosti"""
+		self.screen.blit(self.bg, (0, 0))
+		
+		overlay = pygame.Surface((self.width, self.height))
+		overlay.set_alpha(200)
+		overlay.fill("black")
+		self.screen.blit(overlay, (0, 0))
+		
+		title = self.font_large.render("SELECT DIFFICULTY", True, "white")
+		title_rect = title.get_rect(center=(self.center_x, 150))
+		self.screen.blit(title, title_rect)
+		
+		# Easy
+		easy_color = "yellow" if self.selected_difficulty == 0 else "white"
+		easy_text = self.font_medium.render("EASY", True, easy_color)
+		easy_rect = easy_text.get_rect(center=(self.center_x, 280))
+		self.screen.blit(easy_text, easy_rect)
+		
+		easy_desc = self.font_small.render("5 Lives | Slow Aliens", True, easy_color)
+		easy_desc_rect = easy_desc.get_rect(center=(self.center_x, 310))
+		self.screen.blit(easy_desc, easy_desc_rect)
+		
+		# Normal
+		normal_color = "yellow" if self.selected_difficulty == 1 else "white"
+		normal_text = self.font_medium.render("NORMAL", True, normal_color)
+		normal_rect = normal_text.get_rect(center=(self.center_x, 360))
+		self.screen.blit(normal_text, normal_rect)
+		
+		normal_desc = self.font_small.render("3 Lives | Medium Aliens", True, normal_color)
+		normal_desc_rect = normal_desc.get_rect(center=(self.center_x, 390))
+		self.screen.blit(normal_desc, normal_desc_rect)
+		
+		# Hard
+		hard_color = "yellow" if self.selected_difficulty == 2 else "white"
+		hard_text = self.font_medium.render("HARD", True, hard_color)
+		hard_rect = hard_text.get_rect(center=(self.center_x, 440))
+		self.screen.blit(hard_text, hard_rect)
+		
+		hard_desc = self.font_small.render("2 Lives | Fast Aliens", True, hard_color)
+		hard_desc_rect = hard_desc.get_rect(center=(self.center_x, 470))
+		self.screen.blit(hard_desc, hard_desc_rect)
+		
+		# Arrow
+		arrow = self.font_large.render(">", True, "yellow")
+		arrow_y = 280 if self.selected_difficulty == 0 else (360 if self.selected_difficulty == 1 else 440)
+		arrow_rect = arrow.get_rect(center=(self.center_x - 150, arrow_y))
+		self.screen.blit(arrow, arrow_rect)
+		
+		instruction = self.font_small.render(f"Press '{self.button}' to select", True, "gray")
+		instruction_rect = instruction.get_rect(center=(self.center_x, 540))
+		self.screen.blit(instruction, instruction_rect)
+		
+		self.crt.draw(self.screen)
+	
+	def draw_menu(self):
+		"""Hlavné menu"""
+		self.screen.blit(self.bg, (0, 0))
+		
+		overlay = pygame.Surface((self.width, self.height))
+		overlay.set_alpha(200)
+		overlay.fill("black")
+		self.screen.blit(overlay, (0, 0))
+
+		title = self.font_large.render("SPACE INVADERS", True, "white")
+		title_rect = title.get_rect(center=(self.center_x, 150))
+		self.screen.blit(title, title_rect)
+		
+		diff_text = f"Difficulty: {self.difficulty.upper()}"
+		diff_surf = self.font_medium.render(diff_text, True, "yellow")
+		diff_rect = diff_surf.get_rect(center=(self.center_x, 250))
+		self.screen.blit(diff_surf, diff_rect)
+		
+		highscore_text = self.font_medium.render(f"Best Score: {self.highscore}", True, "#FFD700")
+		highscore_rect = highscore_text.get_rect(center=(self.center_x, 310))
+		self.screen.blit(highscore_text, highscore_rect)
+		
+		start_text = f"Press '{self.button}' to start"
+		start_surf = self.font_medium.render(start_text, True, "green")
+		start_rect = start_surf.get_rect(center=(self.center_x, 400))
+		self.screen.blit(start_surf, start_rect)
+		
+		controls_surf = self.font_small.render("Arrow Keys: Move | A: Shoot", True, "white")
+		controls_rect = controls_surf.get_rect(center=(self.center_x, 460))
+		self.screen.blit(controls_surf, controls_rect)
+		
+		back_surf = self.font_small.render("Press 'B' to change difficulty", True, "gray")
+		back_rect = back_surf.get_rect(center=(self.center_x, 520))
+		self.screen.blit(back_surf, back_rect)
+		
+		self.crt.draw(self.screen)
+	
+	def draw_game(self):
+		"""Herná obrazovka"""
+		self.screen.blit(self.bg, (0, 0))
+		
+		# Game objects
+		self.player.sprite.lasers.draw(self.screen)
+		self.player.draw(self.screen)
+		self.blocks.draw(self.screen)
+		self.aliens.draw(self.screen)
+		self.alien_lasers.draw(self.screen)
+		self.extra.draw(self.screen)
+		
+		# HUD
+		self.display_lives()
+		self.display_score()
+		
+		self.crt.draw(self.screen)
+	
+	def display_lives(self):
+		for live in range(self.lives - 1):
+			x = self.live_x_start_pos + (live * (self.live_surf.get_size()[0] + 10))
+			self.screen.blit(self.live_surf,(x,8))
+
+	def display_score(self):
+		score_surf = self.font_small.render(f'Score: {self.score}',False,'white')
+		score_rect = score_surf.get_rect(topleft = (10,-10))
+		self.screen.blit(score_surf, score_rect)
+	
+	def draw_game_over(self):
+		"""Game Over obrazovka"""
+		self.screen.blit(self.bg, (0, 0))
+		
+		# Pozadie hry
+		self.player.sprite.lasers.draw(self.screen)
+		self.player.draw(self.screen)
+		self.blocks.draw(self.screen)
+		self.aliens.draw(self.screen)
+		self.alien_lasers.draw(self.screen)
+		self.extra.draw(self.screen)
+		self.display_lives()
+		self.display_score()
+		
+		overlay = pygame.Surface((self.width, self.height))
+		overlay.set_alpha(180)
+		overlay.fill((0,0,0))
+		self.screen.blit(overlay, (0,0))
+		
+		game_over_surf = self.font_large.render("GAME OVER", False, "red")
+		game_over_rect = game_over_surf.get_rect(center = (self.center_x, 200))
+		self.screen.blit(game_over_surf, game_over_rect)
+		
+		final_score_surf = self.font_medium.render(f"Final Score: {self.score}", False, "white")
+		final_score_rect = final_score_surf.get_rect(center = (self.center_x, 280))
+		self.screen.blit(final_score_surf, final_score_rect)
+		
+		if self.score > self.highscore:
+			new_best_surf = self.font_medium.render("NEW BEST SCORE!", False, "yellow")
+			new_best_rect = new_best_surf.get_rect(center = (self.center_x, 340))
+			self.screen.blit(new_best_surf, new_best_rect)
+		else:
+			best_surf = self.font_medium.render(f"Best: {self.highscore}", False, "yellow")
+			best_rect = best_surf.get_rect(center = (self.center_x, 340))
+			self.screen.blit(best_surf, best_rect)
+		
+		restart_surf = self.font_small.render(f"Press '{self.button}' to Play Again or ESC to Exit", False, "white")
+		restart_rect = restart_surf.get_rect(center = (self.center_x, 450))
+		self.screen.blit(restart_surf, restart_rect)
+		
+		# Uložiť skóre iba raz
+		if not self._score_saved:
+			self.save_system.update_score(f"SpaceInvaders_{self.difficulty}", self.score)
+			self._score_saved = True
+		
+		self.crt.draw(self.screen)
+	
+	def draw_victory(self):
+		"""Victory obrazovka"""
+		self.screen.blit(self.bg, (0, 0))
+		
+		# Pozadie hry
+		self.player.sprite.lasers.draw(self.screen)
+		self.player.draw(self.screen)
+		self.blocks.draw(self.screen)
+		self.aliens.draw(self.screen)
+		self.alien_lasers.draw(self.screen)
+		self.extra.draw(self.screen)
+		self.display_lives()
+		self.display_score()
+		
+		overlay = pygame.Surface((self.width, self.height))
+		overlay.set_alpha(180)
+		overlay.fill((0,0,0))
+		self.screen.blit(overlay, (0,0))
+		
+		victory_surf = self.font_large.render("VICTORY!", False, "green")
+		victory_rect = victory_surf.get_rect(center = (self.center_x, 200))
+		self.screen.blit(victory_surf, victory_rect)
+		
+		final_score_surf = self.font_medium.render(f"Final Score: {self.score}", False, "white")
+		final_score_rect = final_score_surf.get_rect(center = (self.center_x, 280))
+		self.screen.blit(final_score_surf, final_score_rect)
+		
+		if self.score > self.highscore:
+			new_best_surf = self.font_medium.render("NEW BEST SCORE!", False, "yellow")
+			new_best_rect = new_best_surf.get_rect(center = (self.center_x, 340))
+			self.screen.blit(new_best_surf, new_best_rect)
+		else:
+			best_surf = self.font_medium.render(f"Best: {self.highscore}", False, "yellow")
+			best_rect = best_surf.get_rect(center = (self.center_x, 340))
+			self.screen.blit(best_surf, best_rect)
+		
+		restart_surf = self.font_small.render(f"Press '{self.button}' to Play Again or ESC to Exit", False, "white")
+		restart_rect = restart_surf.get_rect(center = (self.center_x, 450))
+		self.screen.blit(restart_surf, restart_rect)
+		
+		self.crt.draw(self.screen)
+
+
+class CRT:
+	def __init__(self, screen_width, screen_height):
+		self.screen_width = screen_width
+		self.screen_height = screen_height
+		self.tv = pygame.image.load('Games/assets/images/space_invaders/tv.png').convert_alpha()
+		self.tv = pygame.transform.scale(self.tv, (screen_width, screen_height))
+
+	def create_crt_lines(self):
+		line_height = 3
+		line_amount = int(self.screen_height / line_height)
+		for line in range(line_amount):
+			y_pos = line * line_height
+			pygame.draw.line(self.tv, 'black', (0, y_pos), (self.screen_width, y_pos), 1)
+
+	def draw(self, screen):
+		self.tv.set_alpha(randint(75,90))
+		self.create_crt_lines()
+		screen.blit(self.tv, (0, 0))
+
+
+if __name__ == '__main__':
+	game = SpaceInvaders(fullscreen=False, difficulty="normal")
+	game.run()
