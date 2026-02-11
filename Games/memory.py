@@ -43,7 +43,7 @@ class Card:
             "lemon": "orange",
             "blueberry": "pink",
             "raspberry": "green",
-            "apricot": "gold",
+            "lime": "gold",
             "coconut": "red"
         }
         self.front_surf.fill(self.color_map.get(card_type, "gray"))
@@ -99,7 +99,7 @@ class Memory(Game):
     def __init__(self, fullscreen=True, difficulty="easy"):
         super().__init__(
             fullscreen, 
-            icon_path="Games/assets/images/memory/memory_icon.png",  # TODO: Doplň cestu
+            icon_path="Games/assets/images/memory/memory_icon.png",
             title="Memory", 
             game_name="Memory"
         )
@@ -136,7 +136,7 @@ class Memory(Game):
             self.card_types += [
                 "kiwi", "mango", "peach", "pear",
                 "plum", "lemon", "blueberry", "raspberry",
-                "apricot", "coconut"
+                "lime", "coconut"
             ]
         
         # 0=difficulty select, 1=game menu, 2=playing, 3=win
@@ -261,7 +261,7 @@ class Memory(Game):
                         "orange", "strawberry", "watermelon", "pineapple",
                         "kiwi", "mango", "peach", "pear",
                         "plum", "lemon", "blueberry", "raspberry",
-                        "apricot", "coconut"
+                        "lime", "coconut"
                     ]
                 else:
                     self.card_types = [
