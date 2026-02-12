@@ -145,20 +145,16 @@ class SpaceInvaders(Game):
 		# Game states: 0=difficulty, 1=menu, 2=playing, 3=game_over, 4=victory
 		self.game_state = 0
 		
-		# Alien laser timer - musí byť definovaný PRED setup_difficulty()
-		self.ALIENLASER = pygame.USEREVENT + 1
+		self.last_alien_shot = 0
 		
-		# Difficulty
 		self.difficulty = difficulty
 		self.selected_difficulty = 1  # 0=easy, 1=normal, 2=hard
 		self.setup_difficulty()
 		
-		# Fonty
 		self.font_small = pygame.font.Font('Games/assets/fonts/Pixeltype.ttf', 20)
 		self.font_medium = pygame.font.Font('Games/assets/fonts/Pixeltype.ttf', 30)
 		self.font_large = pygame.font.Font('Games/assets/fonts/Pixeltype.ttf', 60)
 		
-		# Audio
 		self.music = pygame.mixer.Sound('Games/assets/sounds/music.wav')
 		self.music.set_volume(0.2)
 		self.laser_sound = pygame.mixer.Sound('Games/assets/sounds/laser.wav')
@@ -166,24 +162,19 @@ class SpaceInvaders(Game):
 		self.explosion_sound = pygame.mixer.Sound('Games/assets/sounds/explosion.wav')
 		self.explosion_sound.set_volume(0.3)
 		
-		# CRT effect
 		self.crt = CRT(self.width, self.height)
 		
-		# Background
 		self.bg = pygame.Surface((self.width, self.height))
 		self.bg.fill((30,30,30))
 		
-		# Button text
 		if self.i.GPIO1 and GPIO_ENABLED and self.i.GPIO:
 			self.button = "A"
 		else:
 			self.button = "SPACE"
 		
-		# Inicializácia hry
 		self.init_game()
 
 	def setup_difficulty(self):
-		"""Nastaví parametre podľa obtiažnosti"""
 		if self.difficulty == "easy":
 			self.alien_speed = 2
 			self.starting_lives = 5
@@ -192,16 +183,12 @@ class SpaceInvaders(Game):
 			self.alien_speed = 3
 			self.starting_lives = 3
 			self.alien_shoot_interval = 800
-		else:  # hard
+		else:  
 			self.alien_speed = 5
 			self.starting_lives = 2
 			self.alien_shoot_interval = 600
-		
-		# Update timer
-		pygame.time.set_timer(self.ALIENLASER, self.alien_shoot_interval)
 
 	def init_game(self):
-		"""Inicializuje/resetuje herné objekty"""
 		player_sprite = Player((self.center_x, self.height), self.width, 5, self.i)
 		self.player = pygame.sprite.GroupSingle(player_sprite)
 
@@ -212,7 +199,6 @@ class SpaceInvaders(Game):
 		self.score = 0
 		self._score_saved = False
 
-		# Obstacles
 		self.shape = shape
 		self.block_size = 6
 		self.blocks = pygame.sprite.Group()
@@ -220,15 +206,15 @@ class SpaceInvaders(Game):
 		self.obstacle_x_positions = [num * (self.width / self.obstacle_amount) for num in range(self.obstacle_amount)]
 		self.create_multiple_obstacles(*self.obstacle_x_positions, x_start = self.width / 15, y_start = 480)
 
-		# Aliens
 		self.aliens = pygame.sprite.Group()
 		self.alien_lasers = pygame.sprite.Group()
 		self.alien_setup(rows = 6, cols = 8)
 		self.alien_direction = self.alien_speed
 
-		# Extra
 		self.extra = pygame.sprite.GroupSingle()
 		self.extra_spawn_time = randint(40,80)
+		
+		self.last_alien_shot = pygame.time.get_ticks()
 
 	def create_obstacle(self, x_start, y_start, offset_x):
 		for row_index, row in enumerate(self.shape):
@@ -283,7 +269,6 @@ class SpaceInvaders(Game):
 			self.extra_spawn_time = randint(400,800)
 
 	def collision_checks(self):
-		# Player lasers 
 		if self.player.sprite.lasers:
 			for laser in self.player.sprite.lasers:
 				if pygame.sprite.spritecollide(laser, self.blocks, True):
@@ -300,7 +285,6 @@ class SpaceInvaders(Game):
 					self.score += 500
 					laser.kill()
 
-		# Alien lasers 
 		if self.alien_lasers:
 			for laser in self.alien_lasers:
 				if pygame.sprite.spritecollide(laser, self.blocks, True):
@@ -313,7 +297,6 @@ class SpaceInvaders(Game):
 						self.game_state = 3
 						self.music.stop()
 
-		# Aliens
 		if self.aliens:
 			for alien in self.aliens:
 				pygame.sprite.spritecollide(alien, self.blocks, True)
@@ -323,13 +306,7 @@ class SpaceInvaders(Game):
 					self.music.stop()
 
 	def handle_input(self):
-		"""Spracovanie vstupov podľa game state"""
-		# Event handling pre alien laser
-		for event in pygame.event.get():
-			if event.type == self.ALIENLASER and self.game_state == 2:
-				self.alien_shoot()
-		
-		if self.game_state == 0:  # Difficulty select
+		if self.game_state == 0:  
 			if self.i.just_pressed("UP"):
 				self.selected_difficulty = (self.selected_difficulty - 1) % 3
 			
@@ -349,7 +326,7 @@ class SpaceInvaders(Game):
 				self.highscore = self.save_system.get_highscore(f"SpaceInvaders_{self.difficulty}")
 				self.game_state = 1
 		
-		elif self.game_state == 1:  # Menu
+		elif self.game_state == 1:  
 			if self.i.just_pressed("B"):
 				self.game_state = 0
 			
@@ -357,17 +334,21 @@ class SpaceInvaders(Game):
 				self.game_state = 2
 				self.music.play(loops = -1)
 		
-		elif self.game_state == 2:  # Playing
-			pass  # Player input je spracovaný v Player.update()
+		elif self.game_state == 2:  
+			pass  
 		
-		elif self.game_state == 3 or self.game_state == 4:  # Game Over / Victory
+		elif self.game_state == 3 or self.game_state == 4:  
 			if self.i.just_pressed("A"):
 				self.game_state = 0
 				self._score_saved = False
 
 	def update(self):
-		"""Aktualizácia hernej logiky"""
 		if self.game_state == 2:
+			current_time = pygame.time.get_ticks()
+			if current_time - self.last_alien_shot >= self.alien_shoot_interval:
+				self.alien_shoot()
+				self.last_alien_shot = current_time
+			
 			self.player.update()
 			self.alien_lasers.update()
 			self.extra.update()
@@ -377,14 +358,12 @@ class SpaceInvaders(Game):
 			self.extra_alien_timer()
 			self.collision_checks()
 			
-			# Victory check
 			if not self.aliens.sprites():
 				self.game_state = 4
 				self.music.stop()
 				self.save_system.update_score(f"SpaceInvaders_{self.difficulty}", self.score)
 
 	def draw(self):
-		"""Vykreslenie podľa game state"""
 		if self.game_state == 0:
 			self.draw_difficulty_select()
 		
@@ -401,7 +380,6 @@ class SpaceInvaders(Game):
 			self.draw_victory()
 	
 	def draw_difficulty_select(self):
-		"""Výber obtiažnosti"""
 		self.screen.blit(self.bg, (0, 0))
 		
 		overlay = pygame.Surface((self.width, self.height))
@@ -413,7 +391,6 @@ class SpaceInvaders(Game):
 		title_rect = title.get_rect(center=(self.center_x, 150))
 		self.screen.blit(title, title_rect)
 		
-		# Easy
 		easy_color = "yellow" if self.selected_difficulty == 0 else "white"
 		easy_text = self.font_medium.render("EASY", True, easy_color)
 		easy_rect = easy_text.get_rect(center=(self.center_x, 280))
@@ -423,7 +400,6 @@ class SpaceInvaders(Game):
 		easy_desc_rect = easy_desc.get_rect(center=(self.center_x, 310))
 		self.screen.blit(easy_desc, easy_desc_rect)
 		
-		# Normal
 		normal_color = "yellow" if self.selected_difficulty == 1 else "white"
 		normal_text = self.font_medium.render("NORMAL", True, normal_color)
 		normal_rect = normal_text.get_rect(center=(self.center_x, 360))
@@ -433,7 +409,6 @@ class SpaceInvaders(Game):
 		normal_desc_rect = normal_desc.get_rect(center=(self.center_x, 390))
 		self.screen.blit(normal_desc, normal_desc_rect)
 		
-		# Hard
 		hard_color = "yellow" if self.selected_difficulty == 2 else "white"
 		hard_text = self.font_medium.render("HARD", True, hard_color)
 		hard_rect = hard_text.get_rect(center=(self.center_x, 440))
@@ -443,7 +418,6 @@ class SpaceInvaders(Game):
 		hard_desc_rect = hard_desc.get_rect(center=(self.center_x, 470))
 		self.screen.blit(hard_desc, hard_desc_rect)
 		
-		# Arrow
 		arrow = self.font_large.render(">", True, "yellow")
 		arrow_y = 280 if self.selected_difficulty == 0 else (360 if self.selected_difficulty == 1 else 440)
 		arrow_rect = arrow.get_rect(center=(self.center_x - 150, arrow_y))
@@ -456,7 +430,6 @@ class SpaceInvaders(Game):
 		self.crt.draw(self.screen)
 	
 	def draw_menu(self):
-		"""Hlavné menu"""
 		self.screen.blit(self.bg, (0, 0))
 		
 		overlay = pygame.Surface((self.width, self.height))
@@ -493,10 +466,8 @@ class SpaceInvaders(Game):
 		self.crt.draw(self.screen)
 	
 	def draw_game(self):
-		"""Herná obrazovka"""
 		self.screen.blit(self.bg, (0, 0))
 		
-		# Game objects
 		self.player.sprite.lasers.draw(self.screen)
 		self.player.draw(self.screen)
 		self.blocks.draw(self.screen)
@@ -504,7 +475,6 @@ class SpaceInvaders(Game):
 		self.alien_lasers.draw(self.screen)
 		self.extra.draw(self.screen)
 		
-		# HUD
 		self.display_lives()
 		self.display_score()
 		
@@ -524,7 +494,6 @@ class SpaceInvaders(Game):
 		"""Game Over obrazovka"""
 		self.screen.blit(self.bg, (0, 0))
 		
-		# Pozadie hry
 		self.player.sprite.lasers.draw(self.screen)
 		self.player.draw(self.screen)
 		self.blocks.draw(self.screen)
@@ -560,7 +529,6 @@ class SpaceInvaders(Game):
 		restart_rect = restart_surf.get_rect(center = (self.center_x, 450))
 		self.screen.blit(restart_surf, restart_rect)
 		
-		# Uložiť skóre iba raz
 		if not self._score_saved:
 			self.save_system.update_score(f"SpaceInvaders_{self.difficulty}", self.score)
 			self._score_saved = True
@@ -568,10 +536,8 @@ class SpaceInvaders(Game):
 		self.crt.draw(self.screen)
 	
 	def draw_victory(self):
-		"""Victory obrazovka"""
 		self.screen.blit(self.bg, (0, 0))
 		
-		# Pozadie hry
 		self.player.sprite.lasers.draw(self.screen)
 		self.player.draw(self.screen)
 		self.blocks.draw(self.screen)
