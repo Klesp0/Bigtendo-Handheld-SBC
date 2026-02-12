@@ -1,123 +1,137 @@
 import pygame
 import random
-import sys
+import time
+from pygame.math import Vector2
 from _game_base import Game
 from _input_handler import InputHandler
 from config import *
 
 
-class Snake:
-    def __init__(self, x, y, cell_size):
-        self.cell_size = cell_size
-        self.body = [(x, y), (x - cell_size, y), (x - 2 * cell_size, y)]
-        self.direction = (1, 0)  # vpravo
-        self.next_direction = (1, 0)
-        self.grow = False
+class SNAKE:
+    def __init__(self):
+        self.body = [Vector2(5, 10), Vector2(4, 10), Vector2(3, 10)]
+        self.direction = Vector2(0, 0)
+        self.new_block = False
+
+        self.head_up = pygame.image.load('Games/assets/images/snake/head_up.png').convert_alpha()
+        self.head_down = pygame.image.load('Games/assets/images/snake/head_down.png').convert_alpha()
+        self.head_right = pygame.image.load('Games/assets/images/snake/head_right.png').convert_alpha()
+        self.head_left = pygame.image.load('Games/assets/images/snake/head_left.png').convert_alpha()
         
-        # TODO: Načítaj obrázky
-        # self.head_img = pygame.image.load("Games/assets/images/snake/snake_head.png")
-        # self.body_img = pygame.image.load("Games/assets/images/snake/snake_body.png")
-        # self.tail_img = pygame.image.load("Games/assets/images/snake/snake_tail.png")
-        
-    def move(self):
-        self.direction = self.next_direction
-        
-        head_x, head_y = self.body[0]
-        new_head = (head_x + self.direction[0] * self.cell_size,
-                    head_y + self.direction[1] * self.cell_size)
-        
-        self.body.insert(0, new_head)
-        
-        if not self.grow:
-            self.body.pop()
-        else:
-            self.grow = False
-    
-    def change_direction(self, new_direction):
-        if (new_direction[0] * -1, new_direction[1] * -1) != self.direction:
-            self.next_direction = new_direction
-    
-    def grow_snake(self):
-        self.grow = True
-    
-    def check_collision(self, width, height, walls_enabled):
-        head_x, head_y = self.body[0]
-        
-        # Kolízia so stenami PRED kontrolou tela (musí byť prvá)
-        if walls_enabled:
-            if (head_x < 0 or head_x >= width or 
-                head_y < 0 or head_y >= height):
-                return True
-        else:
-            # Teleportácia cez steny
-            if head_x < 0:
-                self.body[0] = (width - self.cell_size, head_y)
-                head_x = self.body[0][0]
-            elif head_x >= width:
-                self.body[0] = (0, head_y)
-                head_x = self.body[0][0]
-            elif head_y < 0:
-                self.body[0] = (head_x, height - self.cell_size)
-                head_y = self.body[0][1]
-            elif head_y >= height:
-                self.body[0] = (head_x, 0)
-                head_y = self.body[0][1]
-        
-        # Kolízia s vlastným telom (musí byť DRUHÁ, po teleportácii)
-        if (head_x, head_y) in self.body[1:]:
-            return True
-        
-        return False
-    
-    def draw(self, screen):
-        for i, segment in enumerate(self.body):
-            if i == 0:
-                # Hlava
-                color = "darkgreen"
-            elif i == len(self.body) - 1:
-                # Chvost
-                color = "green"
+        self.tail_up = pygame.image.load('Games/assets/images/snake/tail_up.png').convert_alpha()
+        self.tail_down = pygame.image.load('Games/assets/images/snake/tail_down.png').convert_alpha()
+        self.tail_right = pygame.image.load('Games/assets/images/snake/tail_right.png').convert_alpha()
+        self.tail_left = pygame.image.load('Games/assets/images/snake/tail_left.png').convert_alpha()
+
+        self.body_vertical = pygame.image.load('Games/assets/images/snake/body_vertical.png').convert_alpha()
+        self.body_horizontal = pygame.image.load('Games/assets/images/snake/body_horizontal.png').convert_alpha()
+
+        self.body_tr = pygame.image.load('Games/assets/images/snake/body_tr.png').convert_alpha()
+        self.body_tl = pygame.image.load('Games/assets/images/snake/body_tl.png').convert_alpha()
+        self.body_br = pygame.image.load('Games/assets/images/snake/body_br.png').convert_alpha()
+        self.body_bl = pygame.image.load('Games/assets/images/snake/body_bl.png').convert_alpha()
+        self.crunch_sound = pygame.mixer.Sound('Games/assets/sounds/crunch.wav')
+
+    def draw_snake(self, screen, cell_size):
+        self.update_head_graphics()
+        self.update_tail_graphics()
+
+        for index, block in enumerate(self.body):
+            x_pos = int(block.x * cell_size)
+            y_pos = int(block.y * cell_size)
+            block_rect = pygame.Rect(x_pos, y_pos, cell_size, cell_size)
+
+            if index == 0:
+                screen.blit(self.head, block_rect)
+            elif index == len(self.body) - 1:
+                screen.blit(self.tail, block_rect)
             else:
-                # Telo
-                color = "lime"
-            
-            rect = pygame.Rect(segment[0], segment[1], self.cell_size, self.cell_size)
-            pygame.draw.rect(screen, color, rect)
-            pygame.draw.rect(screen, "darkgreen", rect, 2)
+                previous_block = self.body[index + 1] - block
+                next_block = self.body[index - 1] - block
+                if previous_block.x == next_block.x:
+                    screen.blit(self.body_vertical, block_rect)
+                elif previous_block.y == next_block.y:
+                    screen.blit(self.body_horizontal, block_rect)
+                else:
+                    if previous_block.x == -1 and next_block.y == -1 or previous_block.y == -1 and next_block.x == -1:
+                        screen.blit(self.body_tl, block_rect)
+                    elif previous_block.x == -1 and next_block.y == 1 or previous_block.y == 1 and next_block.x == -1:
+                        screen.blit(self.body_bl, block_rect)
+                    elif previous_block.x == 1 and next_block.y == -1 or previous_block.y == -1 and next_block.x == 1:
+                        screen.blit(self.body_tr, block_rect)
+                    elif previous_block.x == 1 and next_block.y == 1 or previous_block.y == 1 and next_block.x == 1:
+                        screen.blit(self.body_br, block_rect)
+
+    def update_head_graphics(self):
+        head_relation = self.body[1] - self.body[0]
+        if head_relation == Vector2(1, 0): 
+            self.head = self.head_left
+        elif head_relation == Vector2(-1, 0): 
+            self.head = self.head_right
+        elif head_relation == Vector2(0, 1): 
+            self.head = self.head_up
+        elif head_relation == Vector2(0, -1): 
+            self.head = self.head_down
+
+    def update_tail_graphics(self):
+        tail_relation = self.body[-2] - self.body[-1]
+        if tail_relation == Vector2(1, 0): 
+            self.tail = self.tail_left
+        elif tail_relation == Vector2(-1, 0): 
+            self.tail = self.tail_right
+        elif tail_relation == Vector2(0, 1): 
+            self.tail = self.tail_up
+        elif tail_relation == Vector2(0, -1): 
+            self.tail = self.tail_down
+
+    def move_snake(self):
+        if self.new_block == True:
+            body_copy = self.body[:]
+            body_copy.insert(0, body_copy[0] + self.direction)
+            self.body = body_copy[:]
+            self.new_block = False
+        else:
+            body_copy = self.body[:-1]
+            body_copy.insert(0, body_copy[0] + self.direction)
+            self.body = body_copy[:]
+
+    def add_block(self):
+        self.new_block = True
+
+    def play_crunch_sound(self):
+        self.crunch_sound.play()
+
+    def reset(self):
+        self.body = [Vector2(5, 10), Vector2(4, 10), Vector2(3, 10)]
+        self.direction = Vector2(0, 0)
 
 
-class Food:
-    def __init__(self, cell_size):
-        self.cell_size = cell_size
-        self.position = (0, 0)
-        
-        # TODO: Načítaj obrázok
-        # self.img = pygame.image.load("Games/assets/images/snake/apple.png")
-    
-    def spawn(self, snake_body, width, height):
-        while True:
-            x = random.randint(0, (width - self.cell_size) // self.cell_size) * self.cell_size
-            y = random.randint(0, (height - self.cell_size) // self.cell_size) * self.cell_size
-            
-            if (x, y) not in snake_body:
-                self.position = (x, y)
-                break
-    
-    def draw(self, screen):
-        rect = pygame.Rect(self.position[0], self.position[1], 
-                          self.cell_size, self.cell_size)
-        pygame.draw.rect(screen, "red", rect)
-        pygame.draw.rect(screen, "darkred", rect, 2)
+class FRUIT:
+    def __init__(self, cell_number_x, cell_number_y):
+        self.cell_number_x = cell_number_x
+        self.cell_number_y = cell_number_y
+        self.randomize()
+
+    def draw_fruit(self, screen, apple, cell_size):
+        fruit_rect = pygame.Rect(int(self.pos.x * cell_size), int(self.pos.y * cell_size), cell_size, cell_size)
+        screen.blit(apple, fruit_rect)
+
+    def randomize(self):
+        self.x = random.randint(0, self.cell_number_x - 1)
+        self.y = random.randint(0, self.cell_number_y - 1)
+        self.pos = Vector2(self.x, self.y)
 
 
 class SnakeGame(Game):
-    def __init__(self, fullscreen=True):
+    def __init__(self, fullscreen=True, difficulty="easy"):
         super().__init__(
             fullscreen,
-            icon_path="Games/assets/images/snake/snake_icon.png",  # TODO: Doplň cestu
+            icon_path="Games/assets/images/snake/snake_icon.png",
             title="Snake",
             game_name="Snake"
         )
+        
+        pygame.mixer.pre_init(44100, -16, 2, 512)
         
         self.width = pygame.display.get_window_size()[0]
         self.height = pygame.display.get_window_size()[1]
@@ -126,126 +140,175 @@ class SnakeGame(Game):
         
         self.i = InputHandler()
         
-        # 0=difficulty select, 1=game menu, 2=playing, 3=game over
+        self.difficulty = difficulty
+        if difficulty == "easy":
+            self.cell_size = 40
+            self.update_speed = 150
+        else:
+            self.cell_size = 30
+            self.update_speed = 100
+        
+        self.cell_number_x = self.width // self.cell_size
+        self.cell_number_y = self.height // self.cell_size
+        
         self.game_state = 0
-        
         self.selected_difficulty = 0
-        self.difficulty = "easy"
         
-        self.cell_size = 20
-        self.walls_enabled = False  # Default pre Easy
-        self.move_delay = 15  # Default pre Easy
+        self.apple = pygame.image.load('Games/assets/images/snake/apple.png').convert_alpha()
+        self.apple = pygame.transform.scale(self.apple, (self.cell_size, self.cell_size))
         
-        self.snake = Snake(self.width // 2, self.height // 2, self.cell_size)
-        self.food = Food(self.cell_size)
-        self.food.spawn(self.snake.body, self.width, self.height)
+        self.snake = SNAKE()
+        self.fruit = FRUIT(self.cell_number_x, self.cell_number_y)
         
-        self.move_counter = 0
-        self.move_delay = 10
+        self.last_update = pygame.time.get_ticks()
+        self.start_time = 0
+        self.elapsed_time = 0
         
         self.font_large = pygame.font.Font("Games/assets/fonts/Pixeltype.ttf", 60)
-        self.font_medium = pygame.font.Font("Games/assets/fonts/Pixeltype.ttf", 50)
-        self.font_small = pygame.font.Font("Games/assets/fonts/Pixeltype.ttf", 40)
+        self.font_medium = pygame.font.Font("Games/assets/fonts/Pixeltype.ttf", 40)
+        self.font_small = pygame.font.Font("Games/assets/fonts/Pixeltype.ttf", 30)
         
-        # TODO: Načítaj pozadie
-        # self.bg = pygame.image.load("Games/assets/images/snake/background.png")
-        # self.bg = pygame.transform.scale(self.bg, (self.width, self.height))
         self.bg = pygame.Surface((self.width, self.height))
-        self.bg.fill("#2d5016")
+        self.bg.fill((175, 215, 70))
         
         if self.i.GPIO1 and GPIO_ENABLED and self.i.GPIO:
             self.button = "A"
         else:
             self.button = "SPACE"
     
-    def reset_game(self):
-        self.score = 0
-        self.snake = Snake(self.width // 2, self.height // 2, self.cell_size)
-        self.food = Food(self.cell_size)
-        self.food.spawn(self.snake.body, self.width, self.height)
-        self.move_counter = 0
-        
-        # Znovu nastav nastavenia obtiažnosti (dôležité pri reštarte)
-        difficulties = {
-            "easy": (False, 15),
-            "medium": (False, 10),
-            "hard": (True, 10),
-            "extreme": (True, 5)
-        }
-        
-        if self.difficulty in difficulties:
-            diff_data = difficulties[self.difficulty]
-            self.walls_enabled = diff_data[0]
-            self.move_delay = diff_data[1]
-    
     def handle_input(self):
         if self.game_state == 0:
             if self.i.just_pressed("UP"):
-                self.selected_difficulty = (self.selected_difficulty - 1) % 4
+                self.selected_difficulty = (self.selected_difficulty - 1) % 2
             
             if self.i.just_pressed("DOWN"):
-                self.selected_difficulty = (self.selected_difficulty + 1) % 4
+                self.selected_difficulty = (self.selected_difficulty + 1) % 2
             
             if self.i.just_pressed("A"):
-                difficulties = {
-                    0: ("easy", False, 15),      # walls OFF, pomalé (vyššie číslo = pomalšie)
-                    1: ("medium", False, 10),    # walls OFF, stredné
-                    2: ("hard", True, 10),       # walls ON, stredné
-                    3: ("extreme", True, 5)      # walls ON, rýchle (nižšie číslo = rýchlejšie)
-                }
+                if self.selected_difficulty == 0:
+                    self.difficulty = "easy"
+                    self.cell_size = 40
+                    self.update_speed = 150
+                else:
+                    self.difficulty = "hard"
+                    self.cell_size = 30
+                    self.update_speed = 100
                 
-                diff_data = difficulties[self.selected_difficulty]
-                self.difficulty = diff_data[0]
-                self.walls_enabled = diff_data[1]
-                self.move_delay = diff_data[2]  # TOTO JE DÔLEŽITÉ
+                self.cell_number_x = self.width // self.cell_size
+                self.cell_number_y = self.height // self.cell_size
                 
+                self.apple = pygame.transform.scale(
+                    pygame.image.load('Games/assets/images/snake/apple.png').convert_alpha(),
+                    (self.cell_size, self.cell_size)
+                )
+                self.snake = SNAKE()
+                self.fruit = FRUIT(self.cell_number_x, self.cell_number_y)
                 self.highscore = self.save_system.get_highscore(f"Snake_{self.difficulty}")
                 self.game_state = 1
         
         elif self.game_state == 1:
-            # BACK - návrat na difficulty select
             if self.i.just_pressed("B"):
                 self.game_state = 0
             
             if self.i.just_pressed("A"):
-                self.reset_game()
                 self.game_state = 2
+                self.start_time = time.time()
+                self.last_update = pygame.time.get_ticks()
+                self.snake.reset()
+                self.fruit.randomize()
         
         elif self.game_state == 2:
             if self.i.just_pressed("UP"):
-                self.snake.change_direction((0, -1))
-            elif self.i.just_pressed("DOWN"):
-                self.snake.change_direction((0, 1))
-            elif self.i.just_pressed("LEFT"):
-                self.snake.change_direction((-1, 0))
-            elif self.i.just_pressed("RIGHT"):
-                self.snake.change_direction((1, 0))
+                if self.snake.direction.y != 1:
+                    self.snake.direction = Vector2(0, -1)
+            
+            if self.i.just_pressed("DOWN"):
+                if self.snake.direction.y != -1:
+                    self.snake.direction = Vector2(0, 1)
+            
+            if self.i.just_pressed("LEFT"):
+                if self.snake.direction.x != 1:
+                    self.snake.direction = Vector2(-1, 0)
+            
+            if self.i.just_pressed("RIGHT"):
+                if self.snake.direction.x != -1:
+                    self.snake.direction = Vector2(1, 0)
         
         elif self.game_state == 3:
             if self.i.just_pressed("A"):
-                self.__init__(fullscreen=self.screen.get_flags() & pygame.FULLSCREEN)
+                self.game_state = 0
+                self.selected_difficulty = 0
     
     def update(self):
         if self.game_state == 2:
-            self.move_counter += 1
+            self.elapsed_time = time.time() - self.start_time
             
-            if self.move_counter >= self.move_delay:
-                self.move_counter = 0
-                self.snake.move()
+            current_time = pygame.time.get_ticks()
+            if current_time - self.last_update >= self.update_speed:
+                self.last_update = current_time
                 
-                # Skontroluj kolíziu (vrátane teleportácie)
-                if self.snake.check_collision(self.width, self.height, self.walls_enabled):
-                    self.game_state = 3
-                    self.save_system.update_score(f"Snake_{self.difficulty}", self.score)
-                    if self.score > self.highscore:
-                        self.highscore = self.score
-                
-                # Kontrola jedla MUSÍ byť PO check_collision (kvôli teleportácii)
-                head_x, head_y = self.snake.body[0]
-                if (head_x, head_y) == self.food.position:
-                    self.snake.grow_snake()
-                    self.food.spawn(self.snake.body, self.width, self.height)
-                    self.score += 10
+                if self.snake.direction != Vector2(0, 0):
+                    self.snake.move_snake()
+                    self.check_collision()
+                    self.check_fail()
+    
+    def check_collision(self):
+        if self.fruit.pos == self.snake.body[0]:
+            self.fruit.randomize()
+            self.snake.add_block()
+            self.snake.play_crunch_sound()
+        
+        for block in self.snake.body[1:]:
+            if block == self.fruit.pos:
+                self.fruit.randomize()
+    
+    def check_fail(self):
+        if not 0 <= self.snake.body[0].x < self.cell_number_x or not 0 <= self.snake.body[0].y < self.cell_number_y:
+            self.game_over()
+        
+        for block in self.snake.body[1:]:
+            if block == self.snake.body[0]:
+                self.game_over()
+    
+    def game_over(self):
+        self.game_state = 3
+        self.save_system.update_score(f"Snake_{self.difficulty}", self.calculate_score())
+    
+    def calculate_score(self):
+        base_score = (len(self.snake.body) - 3) * 100
+        time_bonus = max(0, 5000 - int(self.elapsed_time * 10))
+        return (base_score + time_bonus)/10
+    
+    def draw_grass(self):
+        grass_color = (167, 209, 61)
+        for row in range(self.cell_number_y):
+            if row % 2 == 0:
+                for col in range(self.cell_number_x):
+                    if col % 2 == 0:
+                        grass_rect = pygame.Rect(col * self.cell_size, row * self.cell_size, 
+                                                 self.cell_size, self.cell_size)
+                        pygame.draw.rect(self.screen, grass_color, grass_rect)
+            else:
+                for col in range(self.cell_number_x):
+                    if col % 2 != 0:
+                        grass_rect = pygame.Rect(col * self.cell_size, row * self.cell_size, 
+                                                 self.cell_size, self.cell_size)
+                        pygame.draw.rect(self.screen, grass_color, grass_rect)
+    
+    def draw_score(self):
+        score_text = str(len(self.snake.body) - 3)
+        score_surface = self.font_small.render(score_text, True, (56, 74, 12))
+        score_x = int(self.width - 80)
+        score_y = int(self.height - 40)
+        score_rect = score_surface.get_rect(center=(score_x, score_y))
+        apple_rect = self.apple.get_rect(midright=(score_rect.left, score_rect.centery))
+        bg_rect = pygame.Rect(apple_rect.left, apple_rect.top, 
+                             apple_rect.width + score_rect.width + 6, apple_rect.height)
+        
+        pygame.draw.rect(self.screen, (167, 209, 61), bg_rect)
+        self.screen.blit(score_surface, score_rect)
+        self.screen.blit(self.apple, apple_rect)
+        pygame.draw.rect(self.screen, (56, 74, 12), bg_rect, 2)
     
     def draw(self):
         self.screen.blit(self.bg, (0, 0))
@@ -254,7 +317,7 @@ class SnakeGame(Game):
             self.draw_difficulty_select()
         
         elif self.game_state == 1:
-            self.draw_game_menu()
+            self.draw_menu()
         
         elif self.game_state == 2:
             self.draw_game()
@@ -269,88 +332,70 @@ class SnakeGame(Game):
         self.screen.blit(overlay, (0, 0))
         
         title = self.font_large.render("SELECT DIFFICULTY", True, "#16db65")
-        title_rect = title.get_rect(center=(self.center_x, self.center_y - 200))
+        title_rect = title.get_rect(center=(self.center_x, self.center_y - 150))
         self.screen.blit(title, title_rect)
         
-        difficulties = [
-            ("EASY (No Walls, Slow)", 0),
-            ("MEDIUM (No Walls, Normal)", 1),
-            ("HARD (Walls, Normal)", 2),
-            ("EXTREME (Walls, Fast)", 3)
-        ]
+        easy_color = "yellow" if self.selected_difficulty == 0 else "white"
+        easy_text = self.font_medium.render("EASY (40px cells, Slow)", True, easy_color)
+        easy_rect = easy_text.get_rect(center=(self.center_x, self.center_y - 20))
+        self.screen.blit(easy_text, easy_rect)
         
-        for diff_name, diff_index in difficulties:
-            color = "yellow" if self.selected_difficulty == diff_index else "white"
-            y_pos = self.center_y - 80 + (diff_index * 50)
-            
-            diff_text = self.font_medium.render(diff_name, True, color)
-            diff_rect = diff_text.get_rect(center=(self.center_x, y_pos))
-            self.screen.blit(diff_text, diff_rect)
+        hard_color = "yellow" if self.selected_difficulty == 1 else "white"
+        hard_text = self.font_medium.render("HARD (30px cells, Fast)", True, hard_color)
+        hard_rect = hard_text.get_rect(center=(self.center_x, self.center_y + 40))
+        self.screen.blit(hard_text, hard_rect)
         
         arrow = self.font_large.render(">", True, "yellow")
-        arrow_y = self.center_y - 80 + (self.selected_difficulty * 50)
-        arrow_rect = arrow.get_rect(center=(self.center_x - 350, arrow_y))
+        arrow_y = self.center_y - 20 if self.selected_difficulty == 0 else self.center_y + 40
+        arrow_rect = arrow.get_rect(center=(self.center_x - 250, arrow_y))
         self.screen.blit(arrow, arrow_rect)
         
         instruction = self.font_small.render(f"Press '{self.button}' to select", True, "gray")
-        instruction_rect = instruction.get_rect(center=(self.center_x, self.center_y + 150))
+        instruction_rect = instruction.get_rect(center=(self.center_x, self.center_y + 120))
         self.screen.blit(instruction, instruction_rect)
     
-    def draw_game_menu(self):
+    def draw_menu(self):
         overlay = pygame.Surface((self.width, self.height))
         overlay.set_alpha(200)
         overlay.fill("black")
         self.screen.blit(overlay, (0, 0))
         
-        title = self.font_large.render("SNAKE", True, "white")
-        title_rect = title.get_rect(center=(self.center_x, self.center_y - 120))
+        title = self.font_large.render("SNAKE", True, "#16db65")
+        title_rect = title.get_rect(center=(self.center_x, self.center_y - 100))
         self.screen.blit(title, title_rect)
         
-        walls_text = "Walls: ON" if self.walls_enabled else "Walls: OFF"
-        speed_text = "Speed: FAST" if self.move_delay <= 7 else ("Speed: NORMAL" if self.move_delay == 10 else "Speed: SLOW")
-        
-        diff_text = f"Difficulty: {self.difficulty.upper()}"
+        diff_text = f"Difficulty: {self.difficulty.upper()} ({self.cell_number_x}x{self.cell_number_y})"
         diff_surf = self.font_medium.render(diff_text, True, "yellow")
-        diff_rect = diff_surf.get_rect(center=(self.center_x, self.center_y - 40))
+        diff_rect = diff_surf.get_rect(center=(self.center_x, self.center_y - 20))
         self.screen.blit(diff_surf, diff_rect)
         
-        walls_surf = self.font_small.render(walls_text, True, "white")
-        walls_rect = walls_surf.get_rect(center=(self.center_x, self.center_y + 10))
-        self.screen.blit(walls_surf, walls_rect)
-        
-        speed_surf = self.font_small.render(speed_text, True, "white")
-        speed_rect = speed_surf.get_rect(center=(self.center_x, self.center_y + 50))
-        self.screen.blit(speed_surf, speed_rect)
-        
         highscore_text = self.font_medium.render(f"Best Score: {self.highscore}", True, "#FFD700")
-        highscore_rect = highscore_text.get_rect(center=(self.center_x, self.center_y + 110))
+        highscore_rect = highscore_text.get_rect(center=(self.center_x, self.center_y + 40))
         self.screen.blit(highscore_text, highscore_rect)
         
         start_text = f"Press '{self.button}' to start"
         start_surf = self.font_medium.render(start_text, True, "white")
-        start_rect = start_surf.get_rect(center=(self.center_x, self.center_y + 180))
+        start_rect = start_surf.get_rect(center=(self.center_x, self.center_y + 120))
         self.screen.blit(start_surf, start_rect)
-        
-        # Nápis pre návrat späť
-        back_text = "Press 'B' to go back"
-        back_surf = self.font_small.render(back_text, True, "gray")
-        back_rect = back_surf.get_rect(center=(self.center_x, self.center_y + 240))
-        self.screen.blit(back_surf, back_rect)
     
     def draw_game(self):
-        self.food.draw(self.screen)
-        self.snake.draw(self.screen)
+        self.draw_grass()
+        self.fruit.draw_fruit(self.screen, self.apple, self.cell_size)
+        self.snake.draw_snake(self.screen, self.cell_size)
+        self.draw_score()
         
-        score_surf = self.font_medium.render(f"Score: {self.score}", True, "white")
-        self.screen.blit(score_surf, (20, 20))
+        time_str = f"Time: {int(self.elapsed_time)}s"
+        time_surf = self.font_small.render(time_str, True, (56, 74, 12))
+        self.screen.blit(time_surf, (20, 20))
         
-        highscore_surf = self.font_small.render(f"Best: {self.highscore}", True, "gold")
-        self.screen.blit(highscore_surf, (20, 70))
+        highscore_surf = self.font_small.render(f"Best: {self.highscore}", True, (56, 74, 12))
+        self.screen.blit(highscore_surf, (20, 50))
+        
+        current_score = self.calculate_score()
+        score_surf = self.font_small.render(f"Score: {int(current_score)}", True, (56, 74, 12))
+        self.screen.blit(score_surf, (20, 80))
     
     def draw_game_over(self):
-        self.food.draw(self.screen)
-        self.snake.draw(self.screen)
-        
         overlay = pygame.Surface((self.width, self.height))
         overlay.set_alpha(200)
         overlay.fill("black")
@@ -360,27 +405,33 @@ class SnakeGame(Game):
         game_over_rect = game_over_text.get_rect(center=(self.center_x, self.center_y - 100))
         self.screen.blit(game_over_text, game_over_rect)
         
-        score_text = f"Your Score: {self.score}"
+        final_score = self.calculate_score()
+        score_text = f"Score: {final_score}"
         score_surf = self.font_medium.render(score_text, True, "white")
         score_rect = score_surf.get_rect(center=(self.center_x, self.center_y - 20))
         self.screen.blit(score_surf, score_rect)
         
-        length_text = f"Snake Length: {len(self.snake.body)}"
+        length_text = f"Length: {len(self.snake.body) - 3}"
         length_surf = self.font_medium.render(length_text, True, "white")
         length_rect = length_surf.get_rect(center=(self.center_x, self.center_y + 30))
         self.screen.blit(length_surf, length_rect)
         
-        restart_text = f"Press '{self.button}' to restart"
+        time_text = f"Time: {int(self.elapsed_time)}s"
+        time_surf = self.font_medium.render(time_text, True, "white")
+        time_rect = time_surf.get_rect(center=(self.center_x, self.center_y + 80))
+        self.screen.blit(time_surf, time_rect)
+        
+        restart_text = f"Press '{self.button}' to return to menu"
         restart_surf = self.font_medium.render(restart_text, True, "#16db65")
-        restart_rect = restart_surf.get_rect(center=(self.center_x, self.center_y + 120))
+        restart_rect = restart_surf.get_rect(center=(self.center_x, self.center_y + 150))
         self.screen.blit(restart_surf, restart_rect)
         
-        if self.score > self.highscore:
+        if final_score > self.highscore:
             record_text = "NEW RECORD!"
-            record_surf = self.font_medium.render(record_text, True, "gold")
-            record_rect = record_surf.get_rect(center=(self.center_x, self.center_y - 160))
+            record_surf = self.font_medium.render(record_text, True, "yellow")
+            record_rect = record_surf.get_rect(center=(self.center_x, self.center_y - 150))
             self.screen.blit(record_surf, record_rect)
 
 if __name__ == "__main__":
-    snake = SnakeGame(fullscreen=False)
-    snake.run()
+    snake_game = SnakeGame(fullscreen=False, difficulty="easy")
+    snake_game.run()
