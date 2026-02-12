@@ -83,7 +83,7 @@ class Pong(Game):
     def __init__(self, fullscreen=True):
         super().__init__(
             fullscreen,
-            icon_path="Games/assets/images/pong/pong_icon.png",  # TODO: Doplň cestu
+            icon_path="Games/assets/images/pong/pong_icon.png",
             title="Pong",
             game_name="Pong"
         )

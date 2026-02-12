@@ -1,1 +1,1 @@
- # Bodové hodnoty
+update_score
