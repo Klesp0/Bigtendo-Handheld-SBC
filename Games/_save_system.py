@@ -1,7 +1,6 @@
 import json
 from config import *
 import time
-# mozno dorobit ukladanie settings ked bude cas
 
 
 class SaveSystem:
@@ -46,7 +45,6 @@ class SaveSystem:
             self.highscores_times["times"] = self.times
             self.save()
         
-# Test
 if __name__ == "__main__":
     s = SaveSystem()
     

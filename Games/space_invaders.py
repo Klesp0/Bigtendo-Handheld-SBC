@@ -2,7 +2,6 @@ import pygame, sys
 from random import choice, randint
 from _game_base import Game
 from _input_handler import InputHandler
-from _save_system import SaveSystem
 from config import *
 
 

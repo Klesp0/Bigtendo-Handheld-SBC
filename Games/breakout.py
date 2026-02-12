@@ -85,7 +85,6 @@ class Ball:
                 self.dy = -abs(self.dy)
                 hit_pos = (self.x - paddle_rect.x) / paddle_rect.width
                 self.dx += (hit_pos - 0.5) * 6
-                # obmedzenie rychlosti na range -8 - 8
                 self.dx = max(-8, min(8, self.dx))
 
                 return True

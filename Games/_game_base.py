@@ -32,39 +32,17 @@ class Game(ABC):
     
     @abstractmethod
     def handle_input(self):
-
-        # Spracovanie používateľského vstupu
-        # Volá sa každý frame ak hra nie je pozastavená
-        # Snake - zmena smeru
-        # Clicking game - detekcia kliknutia
-        # Racing - akcelerácia/brzdenie
-
         pass
     
     @abstractmethod
     def update(self):
-  
-        # Aktualizácia hernej logiky a stavu hry
-        # Snake - pohyb hada, kolízie    
-        # Platformer - fyzika, kolízie, AI
-        # Flappy Bird - padanie, kolízie
-        # Tower Defense - pohyb nepriateľov, strieľanie veží
-  
         pass
     
     @abstractmethod
     def draw(self):
-       
-        # Vykreslenie všetkých objektov na obrazovku
-        # Snake - pozadie, had, jablko, skóre
-        # Platformer - pozadie, platformy, hráč, nepriatelia
-        # Space Shooter - pozadie, hráč, nepriateľia, projektily
-        # Menu - tlačidlá, text
-    
         pass
     
     def run(self):
-        # Main game loop
         while self.running:
             
             for event in pygame.event.get():
@@ -99,7 +77,6 @@ class Game(ABC):
         return self.score
                    
     def pause(self):
-        # Pause overlay
         surface = pygame.Surface((WIDTH, HEIGHT))
         surface.set_alpha(128)
         surface.fill("Black")
@@ -110,7 +87,6 @@ class Game(ABC):
         rect = text.get_rect(center=(WIDTH//2, HEIGHT//2))
         self.screen.blit(text, rect)
     
-# Test
 if __name__ == "__main__":
     class TestGame(Game):
         def __init__(self, fullscreen=True, title="Game", icon_path=False):
