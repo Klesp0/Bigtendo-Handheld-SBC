@@ -20,38 +20,12 @@ class Card:
         self.height = height
         
         self.rect = pygame.Rect(self.x, self.y, self.width, self.height)
+
+        front_img = pygame.image.load(f"Games/assets/images/memory/{card_type}.png")
+        self.front_surf = pygame.transform.scale(front_img, (self.width, self.height))
         
-        # Načítanie obrázkov (TODO: doplň cesty k obrázkom)
-        # self.front_img = pygame.image.load(f"SW/assets/images/pexeso/{card_type}.png")
-        # self.front_img = pygame.transform.scale(self.front_img, (self.width, self.height))
-        
-        self.front_surf = pygame.Surface((self.width, self.height))
-        self.color_map = {
-            "apple": "red",
-            "banana": "yellow", 
-            "cherry": "darkred",
-            "grape": "purple",
-            "orange": "orange",
-            "strawberry": "pink",
-            "watermelon": "green",
-            "pineapple": "gold",
-            "kiwi": "red",
-            "mango": "yellow",
-            "peach": "darkred",
-            "pear": "darkred",
-            "plum": "purple",
-            "lemon": "orange",
-            "blueberry": "pink",
-            "raspberry": "green",
-            "lime": "gold",
-            "coconut": "red"
-        }
-        self.front_surf.fill(self.color_map.get(card_type, "gray"))
-        
-        self.back_surf = pygame.Surface((self.width, self.height))
-        self.back_surf.fill("darkblue")
-        # TODO: Načítaj textúru zadnej strany
-        # self.back_img = pygame.image.load("SW/assets/images/pexeso/card_back.png")
+        back_img = pygame.image.load("Games/assets/images/memory/card_back.png")
+        self.back_surf = pygame.transform.scale(back_img, (self.width, self.height))
     
     def update(self, dt):
         if self.is_flipped and self.flip_progress < 1.0:
@@ -118,7 +92,7 @@ class Memory(Game):
             self.card_width = 100
             self.card_height = 100
             self.card_spacing = 20
-        else:  # hard
+        else:  
             self.grid_rows = 6
             self.grid_cols = 6
             self.card_width = 70
