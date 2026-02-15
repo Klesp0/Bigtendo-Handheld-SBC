@@ -136,8 +136,8 @@ class Memory(Game):
         self.font_medium = pygame.font.Font("Games/assets/fonts/Pixeltype.ttf", 40)
         self.font_small = pygame.font.Font("Games/assets/fonts/Pixeltype.ttf", 30)
         
-        self.bg = pygame.Surface((self.width, self.height))
-        self.bg.fill("#1a1a2e")
+        bg_img = pygame.image.load("Games/assets/images/memory/memory_bg.png")
+        self.bg = pygame.transform.scale(bg_img, (self.width, self.height))
         
         if self.i.GPIO1 and GPIO_ENABLED and self.i.GPIO:
             self.button = "A"
