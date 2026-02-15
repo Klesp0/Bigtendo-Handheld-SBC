@@ -173,6 +173,15 @@ class Breakout(Game):
         self.center_y = self.height / 2
         self.game_state = 0
         
+        # Load sounds
+        pygame.mixer.init()
+        self.sound_fail = pygame.mixer.Sound("Games\\assets\\sounds\\fail.wav")
+        self.sound_impact = pygame.mixer.Sound("Games\\assets\\sounds\\impact.wav")
+        self.sound_powerup = pygame.mixer.Sound("Games\\assets\\sounds\\powerup.wav")
+        pygame.mixer.music.load("Games\\assets\\sounds\\music2.wav")
+        pygame.mixer.music.set_volume(0.3)
+        pygame.mixer.music.play(-1)
+        
         self.i = InputHandler()
         
         self.paddle_width = 125 
@@ -234,7 +243,8 @@ class Breakout(Game):
                     balls_to_remove.append(ball)
                     continue
                 
-                ball.collide_with_paddle(self.player.get_rect())
+                if ball.collide_with_paddle(self.player.get_rect()):
+                    self.sound_impact.play()
 
                 bricks_to_remove = []
                 for brick in self.bricks:
@@ -243,6 +253,7 @@ class Breakout(Game):
                     if ball.collide_with_brick(brick.rect):
                         bricks_to_remove.append(brick)
                         self.score += brick.b_score
+                        self.sound_impact.play()
 
                 if len(bricks_to_remove) > 0:
                     i = random.randint(1, 100)
@@ -258,6 +269,8 @@ class Breakout(Game):
             
             power_ups_remove = []
             for power_up in self.power_ups:
+                if self.player.get_rect().colliderect(power_up.rect):
+                    self.sound_powerup.play()
                 self.player.collide_with_power_up(power_up, power_ups_remove, self.balls)
             
             for power_up in power_ups_remove:
@@ -267,6 +280,7 @@ class Breakout(Game):
                 self.balls.remove(ball)
             
             if len(self.balls) == 0:
+                self.sound_fail.play()
                 self.game_state = 2
                 self.save_system.update_score("Breakout", self.score)
     
