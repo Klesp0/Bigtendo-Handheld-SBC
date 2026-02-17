@@ -196,9 +196,6 @@ CONSOLE_NAME = "Bigtendo"
 CONSOLE_VERSION = "1.0"
 TEAM_NAME = "Majstri Kresťania"
 
-# Game dict
-# NoHit bude mat 5 hviezd inej farby pre extra difficulty
-
 GAMES = {
     "Snake": {"engine": "Pygame", "difficulty": 2},
     "Pong": {"engine": "Pygame", "difficulty": 2},
@@ -213,8 +210,7 @@ GAMES = {
     "Pac-Man": {"engine": "Godot", "difficulty": 5},
     "Rhythm Game": {"engine": "Godot", "difficulty": 4},
     "Top-Down Shooter": {"engine": "Godot", "difficulty": 4},
-    "Tower Defense": {"engine": "Godot", "difficulty": 5},
-    "NoHit": {"engine": "Godot", "difficulty": 6},
+    "Tower Defense": {"engine": "Godot", "difficulty": 5}
     
 }
 

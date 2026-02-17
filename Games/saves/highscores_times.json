@@ -12,8 +12,7 @@
         "Pac-Man": 0,
         "Rhythm Game": 0,
         "Top-Down Shooter": 0,
-        "Tower Defense": 0,
-        "NoHit": 0
+        "Tower Defense": 0
     },
     "highscores": {
         "Snake": 0,
@@ -39,7 +38,6 @@
         "Pac-Man": 0,
         "Rhythm Game": 0,
         "Top-Down Shooter": 0,
-        "Tower Defense": 0,
-        "NoHit": 0
+        "Tower Defense": 0
     }
 }
