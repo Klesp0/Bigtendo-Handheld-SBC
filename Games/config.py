@@ -11,6 +11,35 @@ DPI = 170
 # GPIO pins
 GPIO_ENABLED = True
 
+GAMEPAD_BUTTON_MAP = {
+    "A":      0,   # D5
+    "B":      1,   # D6
+    "X":      2,   # D9
+    "Y":      3,   # D10
+    "UP":     4,   # D11
+    "DOWN":   5,   # D12
+    "LEFT":   6,   # D13
+    "RIGHT":  7,   # D24
+    "L1":     8,   # D25
+    "R1":     9,   # SCK
+    "L2":     10,  # MOSI
+    "R2":     11,  # MISO
+    "START":  12,  # RX
+    "HOME":   13,  # TX
+    "JOYSTICK_BUTTON_L": 14,  # SDA
+    "JOYSTICK_BUTTON_R": 15,  # SCL
+    # D4 = button 17 (index 16) - zatial volny
+}
+
+# Mapovanie osí joysticku (pygame axis index)
+# gp.move_joysticks(x=x1, y=y1, z=x2, r_z=y2)
+GAMEPAD_AXIS_MAP = {
+    "LEFT_X":  0,  # x  - lavy joystick X
+    "LEFT_Y":  1,  # y  - lavy joystick Y
+    "RIGHT_X": 2,  # z  - pravy joystick X
+    "RIGHT_Y": 3,  # r_z - pravy joystick Y
+}
+
 GPIO_PINS = {
     # pismenka
     "A": 90,
