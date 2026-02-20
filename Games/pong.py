@@ -141,6 +141,10 @@ class Pong(Game):
         pygame.mixer.music.set_volume(0.3)
         pygame.mixer.music.play(-1)
     
+    def reset_scores(self):
+        self.score_p1 = 0
+        self.score_p2 = 0
+    
     def handle_input(self):
         if self.game_state == 0:
             if self.i.just_pressed("UP"):
@@ -197,7 +201,11 @@ class Pong(Game):
         
         elif self.game_state == 4:
             if self.i.just_pressed("A"):
-                self.__init__(fullscreen=self.screen.get_flags() & pygame.FULLSCREEN)
+                self.reset_scores()
+                if self.game_mode == "singleplayer":
+                    self.game_state = 1
+                else:
+                    self.game_state = 2
     
     def update(self):
         if self.game_state == 3:
@@ -225,12 +233,11 @@ class Pong(Game):
             
             if self.score_p1 >= self.winning_score or self.score_p2 >= self.winning_score:
                 self.game_state = 4
-                winner_score = max(self.score_p1, self.score_p2)
                 
                 if self.game_mode == "singleplayer":
-                    self.save_system.update_score(f"Pong_{self.ai_difficulty}", winner_score)
-                    if winner_score > self.highscore:
-                        self.highscore = winner_score
+                    self.save_system.update_score(f"Pong_{self.ai_difficulty}", self.score_p1)
+                    if self.score_p1 > self.highscore:
+                        self.highscore = self.score_p1
     
     def update_ai(self, dt):
         ai_speeds = {
@@ -407,7 +414,6 @@ class Pong(Game):
         winner_rect = winner_text.get_rect(center=(self.center_x, self.center_y - 50))
         self.screen.blit(winner_text, winner_rect)
         
-        final_score = max(self.score_p1, self.score_p2)
         score_surf = self.font_medium.render(f"Final Score: {self.score_p1} - {self.score_p2}", True, "white")
         score_surf_rect = score_surf.get_rect(center=(self.center_x, self.center_y + 30))
         self.screen.blit(score_surf, score_surf_rect)
@@ -418,7 +424,7 @@ class Pong(Game):
         self.screen.blit(restart_surf, restart_rect)
         
         if self.game_mode == "singleplayer":
-            if final_score > self.highscore:
+            if self.score_p1 >= self.winning_score and self.score_p1 > self.highscore:
                 record_text = "NEW RECORD!"
                 record_surf = self.font_medium.render(record_text, True, "red")
                 record_rect = record_surf.get_rect(center=(self.center_x, self.center_y - 120))
