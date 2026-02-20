@@ -89,10 +89,10 @@ class Game(ABC):
     
 if __name__ == "__main__":
     class TestGame(Game):
-        def __init__(self, fullscreen=True, title="Game", icon_path=False):
-            super().__init__(fullscreen, title, icon_path)
+        def __init__(self, fullscreen=True, title="Game", icon_path = False, game_name = "Memory"):
+            super().__init__(fullscreen, title, icon_path, game_name=game_name)
             
-            self.player_surf = pygame.image.load("Games/shared/bird_flap_1.png").convert_alpha()
+            self.player_surf = pygame.image.load("Games/assets/images/breakout/breakout_bg.png").convert_alpha()
             self.player_rect = self.player_surf.get_rect(midbottom = (WIDTH/2, HEIGHT/2))
             self.rect = pygame.Rect(50, 50, 200, 100)
             self.stvorec = pygame.draw.rect(self.screen, "Blue", self.rect)
@@ -109,5 +109,5 @@ if __name__ == "__main__":
             self.screen.blit(self.player_surf, self.player_rect)   
     
     
-    game = TestGame(fullscreen=False, title="Hra")
+    game = TestGame(fullscreen=False, title="Hra", icon_path= "Games/assets/images/breakout/breakout_bg.png")
     score = game.run()

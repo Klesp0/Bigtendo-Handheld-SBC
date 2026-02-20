@@ -197,6 +197,8 @@ class SpaceInvaders(Game):
 		
 		self.score = 0
 		self._score_saved = False
+		
+		self.total_aliens = 0 
 
 		self.shape = shape
 		self.block_size = 6
@@ -208,6 +210,7 @@ class SpaceInvaders(Game):
 		self.aliens = pygame.sprite.Group()
 		self.alien_lasers = pygame.sprite.Group()
 		self.alien_setup(rows = 6, cols = 8)
+		self.total_aliens = len(self.aliens)  
 		self.alien_direction = self.alien_speed
 
 		self.extra = pygame.sprite.GroupSingle()
@@ -239,14 +242,21 @@ class SpaceInvaders(Game):
 				else: alien_sprite = Alien('red',x,y)
 				self.aliens.add(alien_sprite)
 
+	def get_current_alien_speed(self):
+		alive = len(self.aliens.sprites())
+		dead = self.total_aliens - alive
+		speed = self.alien_speed * (1 + dead * 0.05)
+		return speed
+
 	def alien_position_checker(self):
+		current_speed = self.get_current_alien_speed()
 		all_aliens = self.aliens.sprites()
 		for alien in all_aliens:
 			if alien.rect.right >= self.width:
-				self.alien_direction = -self.alien_speed
+				self.alien_direction = -current_speed
 				self.alien_move_down(4)
 			elif alien.rect.left <= 0:
-				self.alien_direction = self.alien_speed
+				self.alien_direction = current_speed
 				self.alien_move_down(4)
 
 	def alien_move_down(self, distance):
@@ -281,7 +291,7 @@ class SpaceInvaders(Game):
 					self.explosion_sound.play()
 
 				if pygame.sprite.spritecollide(laser, self.extra, True):
-					self.score += 500
+					self.score += randint(1, 6) * 50
 					laser.kill()
 
 		if self.alien_lasers:
@@ -352,6 +362,7 @@ class SpaceInvaders(Game):
 			self.alien_lasers.update()
 			self.extra.update()
 			
+			current_speed = self.get_current_alien_speed()
 			self.aliens.update(self.alien_direction)
 			self.alien_position_checker()
 			self.extra_alien_timer()
@@ -360,7 +371,10 @@ class SpaceInvaders(Game):
 			if not self.aliens.sprites():
 				self.game_state = 4
 				self.music.stop()
+			
+			if self.game_state in (3, 4) and not self._score_saved:
 				self.save_system.update_score(f"SpaceInvaders_{self.difficulty}", self.score)
+				self._score_saved = True
 
 	def draw(self):
 		if self.game_state == 0:
@@ -490,7 +504,6 @@ class SpaceInvaders(Game):
 		self.screen.blit(score_surf, score_rect)
 	
 	def draw_game_over(self):
-		"""Game Over obrazovka"""
 		self.screen.blit(self.bg, (0, 0))
 		
 		self.player.sprite.lasers.draw(self.screen)
@@ -527,10 +540,6 @@ class SpaceInvaders(Game):
 		restart_surf = self.font_small.render(f"Press '{self.button}' to Play Again or ESC to Exit", False, "white")
 		restart_rect = restart_surf.get_rect(center = (self.center_x, 450))
 		self.screen.blit(restart_surf, restart_rect)
-		
-		if not self._score_saved:
-			self.save_system.update_score(f"SpaceInvaders_{self.difficulty}", self.score)
-			self._score_saved = True
 		
 		self.crt.draw(self.screen)
 	
@@ -594,7 +603,6 @@ class CRT:
 		self.create_crt_lines()
 		screen.blit(self.tv, (0, 0))
 
-
 if __name__ == '__main__':
-	game = SpaceInvaders(fullscreen=False, difficulty="normal")
+	game = SpaceInvaders(fullscreen=True, difficulty="normal")
 	game.run()

@@ -1,6 +1,3 @@
-# neni este dorobene, nechytat sa
-# dorobit pre adafruit
-
 try:
     from gpiozero import Button, MCP3001
     GPIO = True
@@ -12,12 +9,9 @@ except ImportError as e:
 import pygame
 from config import *
 import time
-# ked sa neprida debouncing tak odstranit
-
 
 class InputHandler:
     def __init__(self, debouncing_time = 0.05):
-        # je to v sekundach, je to na eliminaciu falosnych signalov
         
         self.GPIO = GPIO
         self.debouncing_time = debouncing_time
@@ -26,7 +20,6 @@ class InputHandler:
         self.last_press = {}
         self.last_state = {}
         
-        # tlacidla a joystick, nastavenie
         try:
             if self.GPIO and GPIO_ENABLED:
                 self.GPIO1 = True
@@ -58,20 +51,16 @@ class InputHandler:
             pygame.init()
         
     def is_pressed(self, button_name):
-        # skontroluje GPIO alebo klavesnicu
-        # skontroluje ci sa tlacidlo stlaci a drzi, bez debouncingu
 
         if self.GPIO and GPIO_ENABLED and self.GPIO1:
             return self.buttons[button_name].is_pressed
         
         if KEYBOARD_ENABLED:
             b = pygame.key.get_pressed()
-            
-            # fallback na klavesnicu     
+             
             if button_name in self.keyboard:   
                 button = self.keyboard[button_name]
-                
-                # vypere bool hodnotu pre danu klavesu            
+                     
                 return b[button]
             
         else:
@@ -79,8 +68,6 @@ class InputHandler:
             return False
     
     def just_pressed(self, button_name):
-        # skontroluje iba stlacenie tlacitla
-        # debouncing, pridat podla potreby, pouzit time
         
         current = self.is_pressed(button_name)
         last = self.last_state.get(button_name, False)
@@ -89,7 +76,6 @@ class InputHandler:
         
         return current and not last
     
-    # aplikuje deadzone a centrovanie joysticku
     def dead_zone(self, value):
         
         c = value - JOYSTICK_CENTER
@@ -105,16 +91,12 @@ class InputHandler:
             maxr = JOYSTICK_CENTER - JOYSTICK_MIN - JOYSTICK_DEADZONE
             result = (c + JOYSTICK_DEADZONE) / maxr
         
-        # pohybovanie hodnoty od -1 po 1
         result = max(-1.0, min(1.0, result))
         result = result * JOYSTICK_SENSITIVITY
         
-        # upravit, opytat clauda
         return max(-1.0, min(1.0, result))
     
-    # vrati iba x alebo y
     def get_axis(self, joystick, a):
-        # joysticky
         joystick_a = f"{joystick}_{a}"
         
         if self.GPIO and GPIO_ENABLED and joystick_a in self.joysticks:
@@ -129,7 +111,6 @@ class InputHandler:
                 return 0.0  
         
         if KEYBOARD_ENABLED:
-            # speci tuple
             keys = pygame.key.get_pressed()
             
             if joystick_a == "RIGHT_X":
@@ -162,7 +143,6 @@ class InputHandler:
         
         return 0.0
         
-    # vrati tuple(x, y), daneho joysticku   
     def left_joystick(self):
         x = self.get_axis("LEFT", "X")
         y = self.get_axis("LEFT", "Y")
@@ -175,7 +155,6 @@ class InputHandler:
         
         return (x, y)
             
-    # vrati tuple(x, y) podla stlacenej sipky
     def krizik_direction(self):
         dx, dy = 0,0
         
@@ -194,7 +173,6 @@ class InputHandler:
         return (dx, dy)
             
     def cleanup(self):
-        # ked je koniec vymaze objekty button
         
         if self.GPIO and GPIO_ENABLED and self.GPIO1:
             for button in self.buttons.values():

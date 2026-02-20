@@ -181,31 +181,36 @@ class Memory(Game):
         if 0 <= index < len(self.cards):
             return self.cards[index]
         return None
-    
-    def skip_matched_cards(self, direction):
-        original_row = self.cursor_row
-        original_col = self.cursor_col
-        max_steps = self.grid_rows * self.grid_cols
-        steps = 0
-        
-        while steps < max_steps:
-            card = self.get_selected_card()
-            if card and not card.is_matched:
-                return
-            
+
+    def find_nearest_unmatched(self, direction):
+        start_row = self.cursor_row
+        start_col = self.cursor_col
+
+        row, col = start_row, start_col
+        for _ in range(self.grid_rows * self.grid_cols):
             if direction == "UP":
-                self.cursor_row = (self.cursor_row - 1) % self.grid_rows
+                row = (row - 1) % self.grid_rows
             elif direction == "DOWN":
-                self.cursor_row = (self.cursor_row + 1) % self.grid_rows
+                row = (row + 1) % self.grid_rows
             elif direction == "LEFT":
-                self.cursor_col = (self.cursor_col - 1) % self.grid_cols
+                col = (col - 1) % self.grid_cols
             elif direction == "RIGHT":
-                self.cursor_col = (self.cursor_col + 1) % self.grid_cols
-            
-            steps += 1
-        
-        self.cursor_row = original_row
-        self.cursor_col = original_col
+                col = (col + 1) % self.grid_cols
+
+            index = row * self.grid_cols + col
+            card = self.cards[index]
+            if not card.is_matched:
+                self.cursor_row = row
+                self.cursor_col = col
+                return
+
+        for r in range(self.grid_rows):
+            for c in range(self.grid_cols):
+                index = r * self.grid_cols + c
+                if not self.cards[index].is_matched:
+                    self.cursor_row = r
+                    self.cursor_col = c
+                    return
     
     def handle_input(self):
         if self.game_state == 0:
@@ -262,20 +267,16 @@ class Memory(Game):
         elif self.game_state == 2:
             if not self.checking_match:
                 if self.i.just_pressed("UP"):
-                    self.cursor_row = (self.cursor_row - 1) % self.grid_rows
-                    self.skip_matched_cards("UP")
+                    self.find_nearest_unmatched("UP")
                 
                 if self.i.just_pressed("DOWN"):
-                    self.cursor_row = (self.cursor_row + 1) % self.grid_rows
-                    self.skip_matched_cards("DOWN")
+                    self.find_nearest_unmatched("DOWN")
                 
                 if self.i.just_pressed("LEFT"):
-                    self.cursor_col = (self.cursor_col - 1) % self.grid_cols
-                    self.skip_matched_cards("LEFT")
+                    self.find_nearest_unmatched("LEFT")
                 
                 if self.i.just_pressed("RIGHT"):
-                    self.cursor_col = (self.cursor_col + 1) % self.grid_cols
-                    self.skip_matched_cards("RIGHT")
+                    self.find_nearest_unmatched("RIGHT")
                 
                 if self.i.just_pressed("A"):
                     self.select_card()
@@ -322,6 +323,10 @@ class Memory(Game):
                 card1.is_matched = True
                 card2.is_matched = True
                 self.matches_found += 1
+
+                current_card = self.get_selected_card()
+                if current_card and current_card.is_matched:
+                    self.find_nearest_unmatched("RIGHT")
             else:
                 card1.unflip()
                 card2.unflip()
@@ -461,5 +466,5 @@ class Memory(Game):
             self.screen.blit(record_surf, record_rect)
         
 if __name__ == "__main__":
-    memory = Memory(fullscreen=False, difficulty="easy")
+    memory = Memory(fullscreen=True, difficulty="easy")
     memory.run()

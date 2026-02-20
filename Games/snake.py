@@ -143,10 +143,12 @@ class SnakeGame(Game):
         self.difficulty = difficulty
         if difficulty == "easy":
             self.cell_size = 40
-            self.update_speed = 150
+            self.base_update_speed = 150  
         else:
             self.cell_size = 30
-            self.update_speed = 100
+            self.base_update_speed = 100
+        
+        self.update_speed = self.base_update_speed
         
         self.cell_number_x = self.width // self.cell_size
         self.cell_number_y = self.height // self.cell_size
@@ -163,6 +165,7 @@ class SnakeGame(Game):
         self.last_update = pygame.time.get_ticks()
         self.start_time = 0
         self.elapsed_time = 0
+        self.apples_eaten = 0  
         
         self.font_large = pygame.font.Font("Games/assets/fonts/Pixeltype.ttf", 60)
         self.font_medium = pygame.font.Font("Games/assets/fonts/Pixeltype.ttf", 40)
@@ -175,6 +178,10 @@ class SnakeGame(Game):
             self.button = "A"
         else:
             self.button = "SPACE"
+        
+        pygame.mixer.music.load("Games\\assets\\sounds\\music2.wav")
+        pygame.mixer.music.set_volume(0.3)
+        pygame.mixer.music.play(-1)
     
     def handle_input(self):
         if self.game_state == 0:
@@ -188,12 +195,13 @@ class SnakeGame(Game):
                 if self.selected_difficulty == 0:
                     self.difficulty = "easy"
                     self.cell_size = 40
-                    self.update_speed = 150
+                    self.base_update_speed = 150
                 else:
                     self.difficulty = "hard"
                     self.cell_size = 30
-                    self.update_speed = 100
+                    self.base_update_speed = 100
                 
+                self.update_speed = self.base_update_speed
                 self.cell_number_x = self.width // self.cell_size
                 self.cell_number_y = self.height // self.cell_size
                 
@@ -214,6 +222,8 @@ class SnakeGame(Game):
                 self.game_state = 2
                 self.start_time = time.time()
                 self.last_update = pygame.time.get_ticks()
+                self.update_speed = self.base_update_speed
+                self.apples_eaten = 0
                 self.snake.reset()
                 self.fruit.randomize()
         
@@ -257,6 +267,9 @@ class SnakeGame(Game):
             self.fruit.randomize()
             self.snake.add_block()
             self.snake.play_crunch_sound()
+            self.apples_eaten += 1
+            
+            self.update_speed = max(60, self.base_update_speed - self.apples_eaten * 5)
         
         for block in self.snake.body[1:]:
             if block == self.fruit.pos:
@@ -275,9 +288,8 @@ class SnakeGame(Game):
         self.save_system.update_score(f"Snake_{self.difficulty}", self.calculate_score())
     
     def calculate_score(self):
-        base_score = (len(self.snake.body) - 3) * 100
-        time_bonus = max(0, 5000 - int(self.elapsed_time * 10))
-        return (base_score + time_bonus)/10
+        difficulty_mult = 2 if self.difficulty == "hard" else 1
+        return self.apples_eaten * 10 * difficulty_mult
     
     def draw_grass(self):
         grass_color = (167, 209, 61)
@@ -296,7 +308,7 @@ class SnakeGame(Game):
                         pygame.draw.rect(self.screen, grass_color, grass_rect)
     
     def draw_score(self):
-        score_text = str(len(self.snake.body) - 3)
+        score_text = str(self.apples_eaten)
         score_surface = self.font_small.render(score_text, True, (56, 74, 12))
         score_x = int(self.width - 80)
         score_y = int(self.height - 40)
@@ -391,8 +403,7 @@ class SnakeGame(Game):
         highscore_surf = self.font_small.render(f"Best: {self.highscore}", True, (56, 74, 12))
         self.screen.blit(highscore_surf, (20, 50))
         
-        current_score = self.calculate_score()
-        score_surf = self.font_small.render(f"Score: {int(current_score)}", True, (56, 74, 12))
+        score_surf = self.font_small.render(f"Score: {self.calculate_score()}", True, (56, 74, 12))
         self.screen.blit(score_surf, (20, 80))
     
     def draw_game_over(self):
@@ -406,32 +417,27 @@ class SnakeGame(Game):
         self.screen.blit(game_over_text, game_over_rect)
         
         final_score = self.calculate_score()
-        score_text = f"Score: {final_score}"
-        score_surf = self.font_medium.render(score_text, True, "white")
+        score_surf = self.font_medium.render(f"Score: {final_score}", True, "white")
         score_rect = score_surf.get_rect(center=(self.center_x, self.center_y - 20))
         self.screen.blit(score_surf, score_rect)
         
-        length_text = f"Length: {len(self.snake.body) - 3}"
-        length_surf = self.font_medium.render(length_text, True, "white")
-        length_rect = length_surf.get_rect(center=(self.center_x, self.center_y + 30))
-        self.screen.blit(length_surf, length_rect)
+        apples_surf = self.font_medium.render(f"Apples: {self.apples_eaten}", True, "white")
+        apples_rect = apples_surf.get_rect(center=(self.center_x, self.center_y + 30))
+        self.screen.blit(apples_surf, apples_rect)
         
-        time_text = f"Time: {int(self.elapsed_time)}s"
-        time_surf = self.font_medium.render(time_text, True, "white")
+        time_surf = self.font_medium.render(f"Time: {int(self.elapsed_time)}s", True, "white")
         time_rect = time_surf.get_rect(center=(self.center_x, self.center_y + 80))
         self.screen.blit(time_surf, time_rect)
         
-        restart_text = f"Press '{self.button}' to return to menu"
-        restart_surf = self.font_medium.render(restart_text, True, "#16db65")
+        restart_surf = self.font_medium.render(f"Press '{self.button}' to return to menu", True, "#16db65")
         restart_rect = restart_surf.get_rect(center=(self.center_x, self.center_y + 150))
         self.screen.blit(restart_surf, restart_rect)
         
         if final_score > self.highscore:
-            record_text = "NEW RECORD!"
-            record_surf = self.font_medium.render(record_text, True, "yellow")
+            record_surf = self.font_medium.render("NEW RECORD!", True, "yellow")
             record_rect = record_surf.get_rect(center=(self.center_x, self.center_y - 150))
             self.screen.blit(record_surf, record_rect)
 
 if __name__ == "__main__":
-    snake_game = SnakeGame(fullscreen=False, difficulty="easy")
+    snake_game = SnakeGame(fullscreen=True, difficulty="easy")
     snake_game.run()

@@ -12,6 +12,9 @@ class Padle:
         self.y = y
         self.width = width
         self.height = height
+        self.original_width = width
+        self.expand_timer = None
+        self.expand_duration = 5000 
         self.speed = 10
         self.screen = screen
     
@@ -34,7 +37,11 @@ class Padle:
     def collide_with_power_up(self, power_up, remove_lt, balls):
         if self.get_rect().colliderect(power_up.rect):
             remove_lt.append(power_up)
-            self.width = power_up.activate(power_up, balls, self.width)
+            if power_up.type == "expand_paddle":
+                self.width = self.original_width * 2
+                self.expand_timer = pygame.time.get_ticks()
+            else:
+                power_up.activate(power_up, balls, self.width)
         
 
 class Ball:
@@ -159,9 +166,6 @@ class PowerUp:
             balls.append(Ball(x, y, -5))
             return width
 
-        else:
-            return width * 2
-
 
 class Breakout(Game):
     def __init__(self, fullscreen=True):
@@ -234,6 +238,12 @@ class Breakout(Game):
         
     def update(self):
         if self.game_state == 1:
+
+            if self.player.expand_timer is not None:
+                if pygame.time.get_ticks() - self.player.expand_timer > self.player.expand_duration:
+                    self.player.width = self.player.original_width
+                    self.player.expand_timer = None
+
             balls_to_remove = []
             for ball in self.balls:
                 ball.update(self.width, self.height)
@@ -297,7 +307,7 @@ class Breakout(Game):
         for power_up in self.power_ups:
             self.screen.blit(power_up.surf, power_up.rect)
         
-        score_surface = self.font1.render(f"Score: {self.score}", False, "#16db65").convert_alpha()
+        score_surface = self.font1.render(f"Score: {self.score}", False, "#FFFFFF").convert_alpha()
         self.screen.blit(score_surface, (10, 10))
         
         if self.game_state == 0:
@@ -321,5 +331,5 @@ class Breakout(Game):
             self.screen.blit(restart_surface, restart_rect)
     
 if __name__ == "__main__":
-    breakout = Breakout(fullscreen=False)
+    breakout = Breakout(fullscreen=True)
     breakout.run()
