@@ -1,11 +1,6 @@
 # Software
 
 
-## Setup
-```bash
-pip3 install pygame
-python3 -m pytest tests/
-```
 ## Games
 
 ### Pygame Games
@@ -28,9 +23,3 @@ Located in `Godot/` folder:
 
 ### Adding New Game
 See [game_development_guide.md](../docs/game_development_guide.md)
-
-## **Development Order (Priority)**
-
-1. input_handler.py     ← remake to adafruit input
-2. main_menu.py        ← Launcher system
-3. retropie_launcher.py ← RetroPie integration

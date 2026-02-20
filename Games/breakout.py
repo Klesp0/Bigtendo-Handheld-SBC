@@ -297,7 +297,7 @@ class Breakout(Game):
         for power_up in self.power_ups:
             self.screen.blit(power_up.surf, power_up.rect)
         
-        score_surface = self.font1.render(f"Score: {self.score}", False, "#16db65").convert_alpha()
+        score_surface = self.font1.render(f"Score: {self.score}", False, "#FFFFFF").convert_alpha()
         self.screen.blit(score_surface, (10, 10))
         
         if self.game_state == 0:
