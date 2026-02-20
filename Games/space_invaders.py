@@ -604,5 +604,5 @@ class CRT:
 		screen.blit(self.tv, (0, 0))
 
 if __name__ == '__main__':
-	game = SpaceInvaders(fullscreen=False, difficulty="normal")
+	game = SpaceInvaders(fullscreen=True, difficulty="normal")
 	game.run()

@@ -432,5 +432,5 @@ class Pong(Game):
 
 
 if __name__ == "__main__":
-    pong = Pong(fullscreen=False)
+    pong = Pong(fullscreen=True)
     pong.run()

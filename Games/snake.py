@@ -439,5 +439,5 @@ class SnakeGame(Game):
             self.screen.blit(record_surf, record_rect)
 
 if __name__ == "__main__":
-    snake_game = SnakeGame(fullscreen=False, difficulty="easy")
+    snake_game = SnakeGame(fullscreen=True, difficulty="easy")
     snake_game.run()

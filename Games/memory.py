@@ -466,5 +466,5 @@ class Memory(Game):
             self.screen.blit(record_surf, record_rect)
         
 if __name__ == "__main__":
-    memory = Memory(fullscreen=False, difficulty="easy")
+    memory = Memory(fullscreen=True, difficulty="easy")
     memory.run()

@@ -331,5 +331,5 @@ class Breakout(Game):
             self.screen.blit(restart_surface, restart_rect)
     
 if __name__ == "__main__":
-    breakout = Breakout(fullscreen=False)
+    breakout = Breakout(fullscreen=True)
     breakout.run()
