@@ -49,9 +49,7 @@ class Preview:
 	def __init__(self, x, y):
 		self.surface = pygame.Surface((SIDEBAR_WIDTH, GAME_HEIGHT * PREVIEW_HEIGHT_FRACTION))
 		self.rect = self.surface.get_rect(topleft=(x, y))
-		
 		self.shape_surfaces = {shape: load(f"Games/assets/images/tetris/{shape}.png").convert_alpha() for shape in TETROMINOS.keys()}
-		
 		self.increment_height = self.surface.get_height() / 3
 
 	def display_pieces(self, shapes):
@@ -73,11 +71,8 @@ class ScoreDisplay:
 	def __init__(self, x, y):
 		self.surface = pygame.Surface((SIDEBAR_WIDTH, GAME_HEIGHT * SCORE_HEIGHT_FRACTION - PADDING))
 		self.rect = self.surface.get_rect(topleft=(x, y))
-		
 		self.font = pygame.font.Font('Games/assets/fonts/Pixeltype.ttf', 30)
-		
 		self.increment_height = self.surface.get_height() / 3
-		 
 		self.score = 0
 		self.level = 1
 		self.lines = 0
@@ -93,7 +88,6 @@ class ScoreDisplay:
 			x = self.surface.get_width() / 2
 			y = self.increment_height / 2 + i * self.increment_height
 			self.display_text((x, y), text)
-
 		display_surface.blit(self.surface, self.rect)
 		pygame.draw.rect(display_surface, LINE_COLOR, self.rect, 2, 2)
 
@@ -119,9 +113,7 @@ class Timer:
 		if current_time - self.start_time >= self.duration and self.active:
 			if self.func and self.start_time != 0:
 				self.func()
-			
 			self.deactivate()
-			
 			if self.repeated:
 				self.activate()
 
@@ -169,13 +161,11 @@ class GameBoard:
 	def calculate_score(self, num_lines):
 		self.current_lines += num_lines
 		self.current_score += SCORE_DATA[num_lines] * self.current_level
-
 		if self.current_lines / 10 > self.current_level:
 			self.current_level += 1
 			self.down_speed *= 0.75
 			self.down_speed_faster = self.down_speed * 0.3
 			self.timers['vertical move'].duration = self.down_speed
-			
 		self.update_score(self.current_lines, self.current_score, self.current_level)
 
 	def check_game_over(self):
@@ -207,12 +197,33 @@ class GameBoard:
 		for col in range(1, COLUMNS):
 			x = col * CELL_SIZE
 			pygame.draw.line(self.line_surface, LINE_COLOR, (x, 0), (x, self.surface.get_height()), 1)
-
 		for row in range(1, ROWS):
 			y = row * CELL_SIZE
 			pygame.draw.line(self.line_surface, LINE_COLOR, (0, y), (self.surface.get_width(), y))
-
 		self.surface.blit(self.line_surface, (0, 0))
+
+	def get_ghost_positions(self):
+		drop = 0
+		while True:
+			can_move = True
+			for block in self.tetromino.blocks:
+				ny = int(block.pos.y) + drop + 1
+				if ny >= ROWS:
+					can_move = False; break
+				if ny >= 0 and self.field_data[ny][int(block.pos.x)]:
+					can_move = False; break
+			if not can_move:
+				break
+			drop += 1
+		return [(int(b.pos.x), int(b.pos.y) + drop) for b in self.tetromino.blocks]
+
+	def hard_drop(self):
+		while not self.tetromino.next_move_vertical_collide(self.tetromino.blocks, 1):
+			for block in self.tetromino.blocks:
+				block.pos.y += 1
+		for block in self.tetromino.blocks:
+			self.field_data[int(block.pos.y)][int(block.pos.x)] = block
+		self.create_new_tetromino()
 
 	def input(self, input_handler):
 		if not self.timers['horizontal move'].active:
@@ -236,6 +247,9 @@ class GameBoard:
 			self.down_pressed = False
 			self.timers['vertical move'].duration = self.down_speed
 
+		if input_handler.just_pressed("A"):
+			self.hard_drop()
+
 	def check_finished_rows(self):
 		delete_rows = []
 		for i, row in enumerate(self.field_data):
@@ -246,7 +260,6 @@ class GameBoard:
 			for delete_row in delete_rows:
 				for block in self.field_data[delete_row]:
 					block.kill()
-
 				for row in self.field_data:
 					for block in row:
 						if block and block.pos.y < delete_row:
@@ -264,6 +277,14 @@ class GameBoard:
 
 	def draw(self, display_surface):
 		self.surface.fill(GRAY)
+
+		for gx, gy in self.get_ghost_positions():
+			if 0 <= gy < ROWS:
+				ghost_surf = pygame.Surface((CELL_SIZE, CELL_SIZE))
+				ghost_surf.fill(self.tetromino.color)
+				ghost_surf.set_alpha(60)
+				self.surface.blit(ghost_surf, (gx * CELL_SIZE, gy * CELL_SIZE))
+
 		self.sprites.draw(self.surface)
 		self.draw_grid()
 		display_surface.blit(self.surface, self.rect)
@@ -277,7 +298,6 @@ class Tetromino:
 		self.color = TETROMINOS[shape]['color']
 		self.create_new_tetromino = create_new_tetromino
 		self.field_data = field_data
-		
 		self.blocks = [Block(group, pos, self.color) for pos in self.block_positions]
 
 	def next_move_horizontal_collide(self, blocks, amount):
@@ -306,7 +326,6 @@ class Tetromino:
 		if self.shape != 'O':
 			pivot_pos = self.blocks[0].pos
 			new_block_positions = [block.rotate(pivot_pos) for block in self.blocks]
-			
 			for pos in new_block_positions:
 				if pos.x < 0 or pos.x >= COLUMNS:
 					return
@@ -314,7 +333,6 @@ class Tetromino:
 					return
 				if pos.y > ROWS:
 					return
-			
 			for i, block in enumerate(self.blocks):
 				block.pos = new_block_positions[i]
 
@@ -324,7 +342,6 @@ class Block(pygame.sprite.Sprite):
 		super().__init__(group)
 		self.image = pygame.Surface((CELL_SIZE, CELL_SIZE))
 		self.image.fill(color)
-		
 		self.pos = pygame.Vector2(pos) + BLOCK_OFFSET
 		self.rect = self.image.get_rect(topleft=self.pos * CELL_SIZE)
 
@@ -362,8 +379,6 @@ class Tetris(Game):
 		self.center_y = self.height / 2
 		
 		self.i = InputHandler()
-		
-		# game states: 0=menu, 1=playing, 2=game over
 		self.game_state = 0
 		
 		total_width = GAME_WIDTH + SIDEBAR_WIDTH + PADDING * 3
@@ -393,7 +408,7 @@ class Tetris(Game):
 		
 		self.bg = pygame.Surface((self.width, self.height))
 		self.bg.fill(GRAY)
-		 
+		
 		self.music = pygame.mixer.Sound("Games/assets/sounds/music1.wav")
 		self.music.set_volume(0.3)
 		
@@ -436,7 +451,6 @@ class Tetris(Game):
 	def update(self):
 		if self.game_state == 1:  
 			self.game_board.update_game()
-			
 			if self.game_board.game_over:
 				self.game_state = 2
 				self.music.stop()
@@ -444,13 +458,10 @@ class Tetris(Game):
 	
 	def draw(self):
 		self.screen.blit(self.bg, (0, 0))
-		
 		if self.game_state == 0:
 			self.draw_menu()
-		
 		elif self.game_state == 1:
 			self.draw_game()
-		
 		elif self.game_state == 2:
 			self.draw_game_over()
 	
@@ -468,10 +479,13 @@ class Tetris(Game):
 		highscore_rect = highscore_text.get_rect(center=(self.center_x, self.center_y))
 		self.screen.blit(highscore_text, highscore_rect)
 		
-		start_text = f"Press '{self.button}' to start"
-		start_surf = self.font_medium.render(start_text, True, "white")
-		start_rect = start_surf.get_rect(center=(self.center_x, self.center_y + 80))
+		start_surf = self.font_medium.render(f"Press '{self.button}' to start", True, "white")
+		start_rect = start_surf.get_rect(center=(self.center_x, self.center_y + 60))
 		self.screen.blit(start_surf, start_rect)
+
+		hint = self.font_small.render(f"'{self.button}' = hard drop during game", True, "gray")
+		hint_rect = hint.get_rect(center=(self.center_x, self.center_y + 110))
+		self.screen.blit(hint, hint_rect)
 	
 	def draw_game(self):
 		self.game_board.draw(self.screen)
@@ -493,32 +507,27 @@ class Tetris(Game):
 		self.screen.blit(game_over_text, game_over_rect)
 		
 		final_score = self.score_display.score
-		score_text = f"Score: {final_score}"
-		score_surf = self.font_medium.render(score_text, True, "white")
+		score_surf = self.font_medium.render(f"Score: {final_score}", True, "white")
 		score_rect = score_surf.get_rect(center=(self.center_x, self.center_y - 20))
 		self.screen.blit(score_surf, score_rect)
 		
-		lines_text = f"Lines: {self.score_display.lines}"
-		lines_surf = self.font_medium.render(lines_text, True, "white")
+		lines_surf = self.font_medium.render(f"Lines: {self.score_display.lines}", True, "white")
 		lines_rect = lines_surf.get_rect(center=(self.center_x, self.center_y + 30))
 		self.screen.blit(lines_surf, lines_rect)
 		
-		level_text = f"Level: {self.score_display.level}"
-		level_surf = self.font_medium.render(level_text, True, "white")
+		level_surf = self.font_medium.render(f"Level: {self.score_display.level}", True, "white")
 		level_rect = level_surf.get_rect(center=(self.center_x, self.center_y + 80))
 		self.screen.blit(level_surf, level_rect)
 		
-		restart_text = f"Press '{self.button}' to restart"
-		restart_surf = self.font_medium.render(restart_text, True, CYAN)
+		restart_surf = self.font_medium.render(f"Press '{self.button}' to restart", True, CYAN)
 		restart_rect = restart_surf.get_rect(center=(self.center_x, self.center_y + 150))
 		self.screen.blit(restart_surf, restart_rect)
 		
 		if final_score > self.highscore:
-			record_text = "NEW RECORD!"
-			record_surf = self.font_medium.render(record_text, True, YELLOW)
+			record_surf = self.font_medium.render("NEW RECORD!", True, YELLOW)
 			record_rect = record_surf.get_rect(center=(self.center_x, self.center_y - 150))
 			self.screen.blit(record_surf, record_rect)
 
 if __name__ == '__main__':
-	tetris = Tetris(fullscreen=False)
+	tetris = Tetris(fullscreen=True)
 	tetris.run()
