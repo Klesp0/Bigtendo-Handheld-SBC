@@ -142,7 +142,7 @@ class Memory(Game):
         else:
             self.button = "SPACE"
         
-        pygame.mixer.music.load("Games\\assets\\sounds\\music1.wav")
+        pygame.mixer.music.load("Games/assets/sounds/music1.wav")
         pygame.mixer.music.set_volume(0.3)
         pygame.mixer.music.play(-1)  
     
