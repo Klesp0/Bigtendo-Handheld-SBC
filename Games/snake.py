@@ -138,8 +138,6 @@ class SnakeGame(Game):
         self.center_x = self.width / 2
         self.center_y = self.height / 2
         
-        self.i = InputHandler()
-        
         self.difficulty = difficulty
         if difficulty == "easy":
             self.cell_size = 40

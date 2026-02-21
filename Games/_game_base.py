@@ -4,6 +4,7 @@ import sys
 from config import *
 from abc import ABC, abstractmethod
 from _save_system import SaveSystem
+from _input_handler import InputHandler
 
 class Game(ABC):
     def __init__(self, fullscreen, title, icon_path, game_name):
@@ -29,6 +30,8 @@ class Game(ABC):
         self.save_system = SaveSystem()
         self.game_name = game_name
         self.highscore = self.save_system.get_highscore(self.game_name)
+        
+        self.i = InputHandler()
     
     @abstractmethod
     def handle_input(self):
@@ -56,7 +59,14 @@ class Game(ABC):
                         self.save_system.update_time(self.game_name)
                         
                     if event.key == pygame.K_p:
-                        self.paused = not self.paused       
+                        self.paused = not self.paused
+                
+                if self.i.just_pressed("HOME"):
+                    self.running = False
+                    self.save_system.update_time(self.game_name)
+                
+                if self.i.just_pressed("START"):
+                        self.paused = not self.paused
             
             if not self.paused:
                 self.handle_input()

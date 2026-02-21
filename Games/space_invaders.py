@@ -143,8 +143,6 @@ class SpaceInvaders(Game):
 		self.center_x = self.width / 2
 		self.center_y = self.height / 2
 		
-		self.i = InputHandler()
-		
 		# Game states: 0=difficulty, 1=menu, 2=playing, 3=game_over, 4=victory
 		self.game_state = 0
 		

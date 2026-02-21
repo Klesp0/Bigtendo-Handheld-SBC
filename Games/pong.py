@@ -93,8 +93,6 @@ class Pong(Game):
         self.center_x = self.width / 2
         self.center_y = self.height / 2
         
-        self.i = InputHandler()
-        
         # 0=mode select, 1=difficulty select (AI), 2=game menu, 3=playing, 4=game over
         self.game_state = 0
         

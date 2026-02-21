@@ -184,8 +184,6 @@ class Breakout(Game):
         pygame.mixer.music.set_volume(0.3)
         pygame.mixer.music.play(-1)
         
-        self.i = InputHandler()
-        
         self.paddle_width = 125 
         self.player = Padle(self.center_x - self.paddle_width / 2, self.height - 50, self.paddle_width, 10, self.screen)
         

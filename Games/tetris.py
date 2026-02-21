@@ -378,7 +378,6 @@ class Tetris(Game):
 		self.center_x = self.width / 2
 		self.center_y = self.height / 2
 		
-		self.i = InputHandler()
 		self.game_state = 0
 		
 		total_width = GAME_WIDTH + SIDEBAR_WIDTH + PADDING * 3
