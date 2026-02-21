@@ -1,8 +1,7 @@
 import pygame
 import random
 from _game_base import Game
-from _input_handler import InputHandler
-from _save_system import SaveSystem
+from _input_handler_adafruit import InputHandler
 from config import *
 
 
@@ -208,7 +207,7 @@ class Breakout(Game):
         self.bg = pygame.image.load("Games\\assets\\images\\breakout\\breakout_bg.png").convert()
         self.bg = pygame.transform.scale(self.bg, (self.width, self.height))
         
-        if self.i.GPIO1 and GPIO_ENABLED and self.i.GPIO:
+        if GPIO_ENABLED:
             self.button = "A"
         else:
             self.button = "SPACE"

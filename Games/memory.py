@@ -2,7 +2,7 @@ import pygame
 import random
 import time
 from _game_base import Game
-from _input_handler import InputHandler
+from _input_handler_adafruit import InputHandler
 from config import *
 
 

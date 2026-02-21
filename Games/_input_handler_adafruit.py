@@ -33,19 +33,20 @@ class InputHandler:
 
     def is_pressed(self, button_name):
         self._pump()
+        result = False
 
         if self.joystick:
             idx = GAMEPAD_BUTTON_MAP.get(button_name)
             if idx is not None and idx < self.joystick.get_numbuttons():
                 return bool(self.joystick.get_button(idx))
 
-        if KEYBOARD_ENABLED:
+        if KEYBOARD_ENABLED and not result:
             keys = pygame.key.get_pressed()
             mapping = self.keyboard.get(button_name)
             if isinstance(mapping, int):
                 return bool(keys[mapping])
 
-        return False
+        return result
 
     def just_pressed(self, button_name):
         current = self.is_pressed(button_name)
@@ -55,6 +56,7 @@ class InputHandler:
 
     def get_axis(self, joystick, axis):
         self._pump()
+        result = 0.0
 
         key = f"{joystick}_{axis}"
 
@@ -63,7 +65,7 @@ class InputHandler:
             if idx is not None and idx < self.joystick.get_numaxes():
                 return self.joystick.get_axis(idx)  
 
-        if KEYBOARD_ENABLED:
+        if KEYBOARD_ENABLED and result == 0.0:
             keys = pygame.key.get_pressed()
             kb_key = f"JOYSTICK{joystick}_{axis}"
             mapping = self.keyboard.get(kb_key, {})
@@ -73,7 +75,7 @@ class InputHandler:
                 if keys[mapping.get("-", 0)]:
                     return -1.0
 
-        return 0.0
+        return result
 
     def left_joystick(self):
         return (self.get_axis("LEFT", "X"), self.get_axis("LEFT", "Y"))
