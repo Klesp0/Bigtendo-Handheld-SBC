@@ -208,5 +208,4 @@ SETTINGS_FILE = SAVE_PATH / "settings"
 if __name__ == "__main__":
     print(f"Screen: {WIDTH}x{HEIGHT}")
     print(f"FPS: {FPS}")
-    print(f"Controller UP pin: {GPIO_PINS['UP']}")
     print(f"Save path: {SAVE_PATH}")
