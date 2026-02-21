@@ -92,6 +92,10 @@ class Player(pygame.sprite.Sprite):
 		self.laser_sound.set_volume(0.5)
 
 	def get_input(self):
+		joystick_x, _ = self.input_handler.left_joystick()
+		if abs(joystick_x) > 0.1:
+			self.rect.x += joystick_x * self.speed * 1.2
+   
 		if self.input_handler.is_pressed("RIGHT"):
 			self.rect.x += self.speed
 		elif self.input_handler.is_pressed("LEFT"):

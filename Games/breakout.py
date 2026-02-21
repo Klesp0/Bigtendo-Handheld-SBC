@@ -230,6 +230,11 @@ class Breakout(Game):
             
             if self.i.is_pressed("LEFT"):
                 self.player.move_left()
+                
+            joystick_x, _ = self.i.left_joystick()
+            if abs(joystick_x) > 0.1: 
+                self.player.x += joystick_x * self.player.speed
+                self.player.x = max(0, min(self.player.x, self.width - self.player.width))
         
         elif self.game_state == 2:
             if self.i.just_pressed("A"):

@@ -187,6 +187,12 @@ class Pong(Game):
         
         elif self.game_state == 3:
             dt = self.clock.get_time() / 1000.0
+             
+            _, left_y = self.i.left_joystick()  
+            
+            if abs(left_y) > 0.1:
+                self.player1.rect.y += left_y * self.player1.speed * dt
+                self.player1.rect.y = max(0, min(self.player1.rect.y, self.height - self.player1.rect.height))
             
             if self.i.is_pressed("UP"):
                 self.player1.move_up(dt)
@@ -194,6 +200,12 @@ class Pong(Game):
                 self.player1.move_down(dt, self.height)
             
             if self.game_mode == "multiplayer":
+                _, right_y = self.i.right_joystick()
+                
+                if abs(right_y) > 0.1:
+                    self.player2.rect.y += right_y * self.player2.speed * dt
+                    self.player2.rect.y = max(0, min(self.player2.rect.y, self.height - self.player2.rect.height))
+                
                 if self.i.is_pressed("Y"):
                     self.player2.move_up(dt)
                 if self.i.is_pressed("B"):
