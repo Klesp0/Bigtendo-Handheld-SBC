@@ -7,8 +7,6 @@ HEIGHT = 600
 FPS = 60
 DPI = 170
 
-# 90- place holder
-# GPIO pins
 GPIO_ENABLED = True
 
 GAMEPAD_BUTTON_MAP = {
@@ -38,50 +36,6 @@ GAMEPAD_AXIS_MAP = {
     "LEFT_Y":  1,  # y  - lavy joystick Y
     "RIGHT_X": 2,  # z  - pravy joystick X
     "RIGHT_Y": 3,  # r_z - pravy joystick Y
-}
-
-GPIO_PINS = {
-    # pismenka
-    "A": 90,
-    "X": 90,
-    "B": 90,
-    "Y": 90,
-    
-    # sipky
-    "DOWN": 90,
-    "LEFT": 90,
-    "RIGHT": 90,
-    "UP": 90,
-    
-    # packy, nakonci
-    "R2": 90,
-    "R1": 90,
-    "L2": 90,
-    "L1": 90,
-        
-    # menu
-    "START": 90,
-    "HOME": 90,
-            
-    # joysticky
-    "JOYSTICK_BUTTON_R": 90,
-    "JOYSTICK_BUTTON_L": 90,
-    
-    "JOYSTICKR_X": 90,
-    "JOYSTICKL_X": 90,
-    
-    "JOYSTICKR_Y": 90,
-    "JOYSTICKL_Y": 90,
-        
-    # vibrovac
-    "VIBRATION_MOTOR": 90,
-        
-    # ON/OFF
-    "ON_OFF": 90,
-        
-    # volume
-    "VOLUME_UP": 90,
-    "VOLUME_DOWN": 90
 }
 
 # JOYSTICKY
@@ -243,28 +197,14 @@ GAMES = {
     
 }
 
-# potrebne paths
-
 # k priecinku, abs
 PROJECT_PATH = Path(__file__).parent.parent
-
-# k assets(relative podla Poject path)
-ASSETS_PATH = PROJECT_PATH / "Design" / "assets"
-IMAGES_PATH = ASSETS_PATH / "images"
-SOUNDS_PATH = ASSETS_PATH / "sounds"
-FONTS_PATH = ASSETS_PATH / "fonts"
-
-# Game paths
-GAMES_PATH = PROJECT_PATH / "SW" / "games"
-PYGAME_GAMES_PATH = GAMES_PATH / "Pygame"
-GODOT_GAMES_PATH = GAMES_PATH / "Godot"
 
 # Save data path
 SAVE_PATH = PROJECT_PATH / "Games" / "saves"
 HIGHSCORES_TIME_FILE = SAVE_PATH / "highscores_times.json"
 SETTINGS_FILE = SAVE_PATH / "settings"
 
-# Test
 if __name__ == "__main__":
     print(f"Screen: {WIDTH}x{HEIGHT}")
     print(f"FPS: {FPS}")
