@@ -132,7 +132,7 @@ class Pong(Game):
         self.bg = pygame.Surface((self.width, self.height))
         self.bg.fill("#000000")
         
-        if self.i.GPIO1 and GPIO_ENABLED and self.i.GPIO:
+        if GPIO_ENABLED:
             self.button = "A"
         else:
             self.button = "SPACE"

@@ -412,7 +412,7 @@ class Tetris(Game):
 		self.music = pygame.mixer.Sound("Games/assets/sounds/music1.wav")
 		self.music.set_volume(0.3)
 		
-		if self.i.GPIO1 and GPIO_ENABLED and self.i.GPIO:
+		if GPIO_ENABLED:
 			self.button = "A"
 		else:
 			self.button = "SPACE"

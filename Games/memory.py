@@ -2,7 +2,7 @@ import pygame
 import random
 import time
 from _game_base import Game
-from _input_handler_adafruit import InputHandler
+from _input_handler import InputHandler
 from config import *
 
 
@@ -139,7 +139,7 @@ class Memory(Game):
         bg_img = pygame.image.load("Games/assets/images/memory/memory_bg.png")
         self.bg = pygame.transform.scale(bg_img, (self.width, self.height))
         
-        if self.i.GPIO1 and GPIO_ENABLED and self.i.GPIO:
+        if GPIO_ENABLED:
             self.button = "A"
         else:
             self.button = "SPACE"

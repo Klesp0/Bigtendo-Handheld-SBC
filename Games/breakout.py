@@ -1,7 +1,7 @@
 import pygame
 import random
 from _game_base import Game
-from _input_handler_adafruit import InputHandler
+from _input_handler import InputHandler
 from config import *
 
 
