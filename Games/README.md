@@ -51,4 +51,3 @@ games = [
 - Verify path: `/home/pi/.emulationstation/downloaded_media/ports/GameName.png`
 - Name must match exactly (case-sensitive)
 - Restart ES after adding icons
-```
