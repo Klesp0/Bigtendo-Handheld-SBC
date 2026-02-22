@@ -176,7 +176,6 @@ class Breakout(Game):
         self.center_y = self.height / 2
         self.game_state = 0
         
-        pygame.mixer.init()
         self.sound_fail = pygame.mixer.Sound("Games/assets/sounds/fail.wav")
         self.sound_impact = pygame.mixer.Sound("Games/assets/sounds/impact.wav")
         self.sound_powerup = pygame.mixer.Sound("Games/assets/sounds/powerup.wav")
