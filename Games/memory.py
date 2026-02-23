@@ -1,9 +1,8 @@
 import pygame
 import random
 import time
-from _game_base import Game
-from _input_handler import InputHandler
-from config import *
+from lib._game_base import Game
+from lib.config import *
 
 
 class Card:
