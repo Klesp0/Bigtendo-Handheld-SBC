@@ -1,10 +1,10 @@
 # Game template
 import pygame
 import sys
-from .config import *
+from config import *
 from abc import ABC, abstractmethod
-from ._save_system import SaveSystem
-from ._input_handler import InputHandler
+from _save_system import SaveSystem
+from _input_handler import InputHandler
 
 class Game(ABC):
     def __init__(self, fullscreen, title, icon_path, game_name):

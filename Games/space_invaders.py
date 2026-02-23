@@ -1,7 +1,7 @@
 import pygame, sys
 from random import choice, randint
-from lib._game_base import Game
-from lib.config import *
+from _game_base import Game
+from config import *
 
 
 class Alien(pygame.sprite.Sprite):

@@ -2,8 +2,8 @@ import pygame
 from pygame.image import load
 from pygame.time import get_ticks
 from random import choice
-from lib._game_base import Game
-from lib.config import *
+from _game_base import Game
+from config import *
 
 COLUMNS = 10
 ROWS = 20
