@@ -1,21 +1,21 @@
-#,Component,Qty,Unit Price (EUR),Total (EUR),Supplier,Link
-1,Raspberry Pi 5 - 8GB RAM,1,128.96,128.96,RPishop.cz,https://rpishop.cz/raspberry-pi-5/6498-raspberry-pi-5-8gb-ram.html
-2,Suptronics X1201 UPS Shield for RPi 5,1,39.45,39.45,RPishop.cz,https://rpishop.cz/523690/suptronics-x1201-ups-shield-pro-raspberry-pi-5/
-3,PremiumCord Flexi HDMI Typ A (F) - micro HDMI Typ D (M) adapter,1,3.66,3.66,RPishop.cz,https://rpishop.cz/499888/premiumcord-flexi-adapter-hdmi-typ-a-samice-micro-hdmi-typ-d-samec-pro-ohebne-zapojeni/
-4,Waveshare DIY HDMI flat cable 0.1m,1,2.02,2.02,RPishop.cz,https://rpishop.cz/diy-hdmi/3012-diy-hdmi-plochy-kabel-10-cm.html
-5,HDMI connector for DIY cable - right angle (up) male,1,5.31,5.31,RPishop.cz,https://rpishop.cz/diy-hdmi/3017-hdmi-koncovka-pro-diy-hdmi-kabel-pravy-uhel-prava-samec.html
-6,micro HDMI connector for DIY cable - right angle (up),1,5.31,5.31,RPishop.cz,https://rpishop.cz/diy-hdmi/2855-adafruit-micro-hdmi-adapter-pro-diy-hdmi-kabel-pravouhly-konektor-pravy-ohyb.html
-7,7" 1024x600 TFT display for RPi HDMI touch,1,43.00,43.00,LaskaKit,https://www.laskakit.cz/en/7--1024x600-tft-displej-pro-raspberry-pi--hdmi--dotykovy/
-8,Raspberry Pi 5 Active Cooler,1,6.15,6.15,Elecom.sk,https://www.elecom.sk/raspberry-pi-5-active-cooler-2/
-9,Adafruit Feather RP2040,1,15.50,15.50,Elecom.sk,https://www.elecom.sk/adafruit-feather-rp2040/
-10,Adafruit PCM5122 I2S DAC with Line Level Output,1,10.60,10.60,Elecom.sk,https://www.elecom.sk/adafruit-pcm5122-i2s-dac-with-line-level-output-hw--i2c-or-spi/
-11,2x 2030 Cavity Speaker 8Ohm 2W 2PIN PH1.25,2,2.23,4.46,https://www.elecom.sk/2030-cavity-speaker-type-b--8-2w--high-quality-sound--compact-size--2pin-ph1-25-connector/
-12,Kingston Canvas Select Plus microSDXC 128GB Class 10 UHS-I,1,13.79,13.79,Alza.sk,https://www.alza.sk/kingston-canvas-select-plus-micro-sdxc-128gb-class-10-uhs-i-sd-adapter-d5689872.htm
-13,Univerzalny plosny spoj obojstranný 5cm x 7cm,3,0.80,2.40,Techfun.sk,https://techfun.sk/produkt/univerzalny-plosny-spoj-obojstranny/?attribute_pa_rozmery=5-cm-x-7-cm
-14,PAM8403 stereo 2x3W mini amplifier,1,0.65,0.65,Techfun.sk,https://techfun.sk/produkt/pam8403-stereo-2x3w-mini-zosilnovac/
-15,Tactile buttons 6x6x13mm (pack of 50),1,2.50,2.50,Techfun.sk,https://techfun.sk/produkt/tlacidla-50-kusov-6x6x13-mm/
-16,Tactile buttons 6x6x6mm (pack of 50),1,2.50,2.50,Techfun.sk,https://techfun.sk/produkt/tlacidla-50-kusov-6x6x6-mm/
-17,XH2.54 connector with cable 2P male+female (pack of 3),3,0.40,1.20,Techfun.sk,https://techfun.sk/produkt/konektor-s-kablikom-xh2-54-rozne-typy/
-18,Joystick 2-axis analogue output,2,0.75,1.50,Techfun.sk,https://techfun.sk/produkt/joystick-2-osi-analogovy-vystup/
-19,18650 battery EVE INR18650-26ME 2600mAh 15A,2,3.75,7.50,Techfun.sk,https://techfun.sk/produkt/18650-bateria-eve-inr18650-25p-2500mah-8c-20a/
-,,,,296.46,TOTAL,
+Component,Qty,Unit Price (EUR),Total (EUR),Supplier,Link,Total (EUR),296.46
+,,,,,,
+1,Raspberry Pi 5 - 8GB RAM,1,128.96,128.96,RPishop.cz,https://rpishop.cz/raspberry-pi-5/6498-raspberry-pi-5-8gb-ram.html,,
+2,Suptronics X1201 UPS Shield for RPi 5,1,39.45,39.45,RPishop.cz,https://rpishop.cz/523690/suptronics-x1201-ups-shield-pro-raspberry-pi-5/,,
+3,PremiumCord Flexi HDMI Typ A (F) - micro HDMI Typ D (M) adapter,1,3.66,3.66,RPishop.cz,https://rpishop.cz/499888/premiumcord-flexi-adapter-hdmi-typ-a-samice-micro-hdmi-typ-d-samec-pro-ohebne-zapojeni/,,
+4,Waveshare DIY HDMI flat cable 0.1m,1,2.02,2.02,RPishop.cz,https://rpishop.cz/diy-hdmi/3012-diy-hdmi-plochy-kabel-10-cm.html,,
+5,HDMI connector for DIY cable - right angle (up) male,1,5.31,5.31,RPishop.cz,https://rpishop.cz/diy-hdmi/3017-hdmi-koncovka-pro-diy-hdmi-kabel-pravy-uhel-prava-samec.html,,
+6,micro HDMI connector for DIY cable - right angle (up),1,5.31,5.31,RPishop.cz,https://rpishop.cz/diy-hdmi/2855-adafruit-micro-hdmi-adapter-pro-diy-hdmi-kabel-pravouhly-konektor-pravy-ohyb.html,,
+7,7" 1024x600 TFT display for RPi HDMI touch,1,43.00,43.00,LaskaKit,https://www.laskakit.cz/en/7--1024x600-tft-displej-pro-raspberry-pi--hdmi--dotykovy/,,
+8,Raspberry Pi 5 Active Cooler,1,6.15,6.15,Elecom.sk,https://www.elecom.sk/raspberry-pi-5-active-cooler-2/,,
+9,Adafruit Feather RP2040,1,15.50,15.50,Elecom.sk,https://www.elecom.sk/adafruit-feather-rp2040/,,
+10,Adafruit PCM5122 I2S DAC with Line Level Output,1,10.60,10.60,Elecom.sk,https://www.elecom.sk/adafruit-pcm5122-i2s-dac-with-line-level-output-hw--i2c-or-spi/,,
+11,2030 Cavity Speaker 8Ohm 2W 2PIN PH1.25,2,2.23,4.46,https://www.elecom.sk/2030-cavity-speaker-type-b--8-2w--high-quality-sound--compact-size--2pin-ph1-25-connector/,,
+12,Kingston Canvas Select Plus microSDXC 128GB Class 10 UHS-I,1,13.79,13.79,Alza.sk,https://www.alza.sk/kingston-canvas-select-plus-micro-sdxc-128gb-class-10-uhs-i-sd-adapter-d5689872.htm,,
+13,Univerzalny plosny spoj obojstranný 5cm x 7cm,3,0.80,2.40,Techfun.sk,https://techfun.sk/produkt/univerzalny-plosny-spoj-obojstranny/?attribute_pa_rozmery=5-cm-x-7-cm,,
+14,PAM8403 stereo 2x3W mini amplifier,1,0.65,0.65,Techfun.sk,https://techfun.sk/produkt/pam8403-stereo-2x3w-mini-zosilnovac/,,
+15,Tactile buttons 6x6x13mm (pack of 50),1,2.50,2.50,Techfun.sk,https://techfun.sk/produkt/tlacidla-50-kusov-6x6x13-mm/,,
+16,Tactile buttons 6x6x6mm (pack of 50),1,2.50,2.50,Techfun.sk,https://techfun.sk/produkt/tlacidla-50-kusov-6x6x6-mm/,,
+17,XH2.54 connector with cable 2P male+female (pack of 3),3,0.40,1.20,Techfun.sk,https://techfun.sk/produkt/konektor-s-kablikom-xh2-54-rozne-typy/,,
+18,Joystick 2-axis analogue output,2,0.75,1.50,Techfun.sk,https://techfun.sk/produkt/joystick-2-osi-analogovy-vystup/,,
+19,18650 battery EVE INR18650-26ME 2600mAh 15A,2,3.75,7.50,Techfun.sk,https://techfun.sk/produkt/18650-bateria-eve-inr18650-25p-2500mah-8c-20a/,,,,,,
