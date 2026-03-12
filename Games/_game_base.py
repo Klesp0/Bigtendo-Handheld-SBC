@@ -51,19 +51,16 @@ class Game(ABC):
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.running = False
-                    self.save_system.update_time(self.game_name)
                 
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE:
                         self.running = False
-                        self.save_system.update_time(self.game_name)
                         
                     if event.key == pygame.K_p:
                         self.paused = not self.paused
                 
                 if self.i.just_pressed("HOME"):
                     self.running = False
-                    self.save_system.update_time(self.game_name)
                 
                 if self.i.just_pressed("START"):
                         self.paused = not self.paused
