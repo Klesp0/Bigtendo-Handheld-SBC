@@ -167,13 +167,10 @@ GAMES = {
     "Tower Defense":  {"engine": "Godot", "difficulty": 5}
 }
 
-# k priecinku, abs
-PROJECT_PATH = Path(__file__).parent.parent.parent
-
 # Save data path
-SAVE_PATH = PROJECT_PATH / "Games" / "saves"
-HIGHSCORES_TIME_FILE = SAVE_PATH / "highscores_times.json"
-SETTINGS_FILE = SAVE_PATH / "settings"
+SAVE_PATH = r"C:\Users\Lukáš\Desktop\Github\Programovanie\Bigtendo-Handheld-SBC\Games\saves"
+HIGHSCORES_TIME_FILE = SAVE_PATH + "\highscores_times.json"
+SETTINGS_FILE = SAVE_PATH + "\settings"
 
 if __name__ == "__main__":
     print(f"Screen: {WIDTH}x{HEIGHT}")
