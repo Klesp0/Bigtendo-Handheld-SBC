@@ -168,7 +168,7 @@ GAMES = {
 }
 
 # k priecinku, abs
-PROJECT_PATH = Path(__file__).parent.parent
+PROJECT_PATH = Path(__file__).parent.parent.parent
 
 # Save data path
 SAVE_PATH = PROJECT_PATH / "Games" / "saves"

@@ -2,8 +2,8 @@ import pygame
 import random
 import time
 from pygame.math import Vector2
-from _game_base import Game
-from config import *
+from pygames_modules import *
+from pygames_modules import Game
 
 
 class SNAKE:

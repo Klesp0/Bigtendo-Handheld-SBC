@@ -1,7 +1,7 @@
 import pygame
 import random
-from _game_base import Game
-from config import *
+from pygames_modules import *
+from pygames_modules import Game
 
 
 class Padle:
