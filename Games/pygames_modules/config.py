@@ -166,7 +166,7 @@ GAMES = {
 
 # Save data path
 SAVE_PATH = r"C:\Users\Lukáš\Desktop\Github\Programovanie\Bigtendo-Handheld-SBC\Games\saves"
-HIGHSCORES_TIME_FILE = SAVE_PATH + "\highscores_times.json"
+HIGHSCORES_TIME_FILE = SAVE_PATH + "\highscores.json"
 SETTINGS_FILE = SAVE_PATH + "\settings"
 
 if __name__ == "__main__":
