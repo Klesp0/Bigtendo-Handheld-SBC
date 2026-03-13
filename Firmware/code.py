@@ -11,13 +11,10 @@ print("Initializing controller...")
 gp = Gamepad(usb_hid.devices)
 print("Gamepad initialized successfully")
 
-# Setup Joysticks (Analog pins)
-# Left joystick:  A1=VRx (X-os),  A0=VRy (Y-os)
-# Right joystick: A2=VRx (X-os),  A3=VRy (Y-os)
-jx1 = analogio.AnalogIn(board.A1)  # lavy joystick X
-jy1 = analogio.AnalogIn(board.A0)  # lavy joystick Y
-jx2 = analogio.AnalogIn(board.A2)  # pravy joystick X
-jy2 = analogio.AnalogIn(board.A3)  # pravy joystick Y
+jx1 = analogio.AnalogIn(board.A3)  # lavy joystick X  (GPIO29)
+jy1 = analogio.AnalogIn(board.A2)  # lavy joystick Y  (GPIO28)
+jx2 = analogio.AnalogIn(board.A1)  # pravy joystick X (GPIO27)
+jy2 = analogio.AnalogIn(board.A0)  # pravy joystick Y (GPIO26)
 print("Joysticks initialized")
 
 # ===== MANUAL CALIBRATION OVERRIDE =====
@@ -33,28 +30,27 @@ INVERT_JOY1_Y = False
 INVERT_JOY2_X = False
 INVERT_JOY2_Y = False
 
-# Osi su spravne priradene podla zapojenia, swap nie je potrebny
 SWAP_JOY1_XY = True
 SWAP_JOY2_XY = False
 
 btn_pins = [
-    board.D6,    
-    board.D9,    
-    board.D10,   
-    board.D11,   
-    board.RX,    
-    board.MISO,  
-    board.D4,    
-    board.TX,    
-    board.SCK,   
-    board.SDA,   
-    board.D24,   
-    board.SCL,   
-    board.D12,   
-    board.D13,   
-    board.MOSI,  
-    board.D5,    
-    board.D25,   
+    board.GP8,   # 0  - A
+    board.GP9,   # 1  - B
+    board.GP10,  # 2  - X
+    board.GP11,  # 3  - Y
+    board.GP1,   # 4  - UP
+    board.GP20,  # 5  - DOWN
+    board.GP6,   # 6  - LEFT
+    board.GP0,   # 7  - RIGHT
+    board.GP18,  # 8  - L1 (upper left trigger)
+    board.GP2,   # 9  - R1 (upper right trigger)
+    board.GP25,  # 10 - L2 (lower left trigger)
+    board.GP3,   # 11 - R2 (lower right trigger)
+    board.GP12,  # 12 - START (right upper menu)
+    board.GP13,  # 13 - HOME  (left upper menu)
+    board.GP24,  # 14 - JOYSTICK_BUTTON_L
+    board.GP7,   # 15 - JOYSTICK_BUTTON_R
+    board.GP19,  # 16 - MENU_L (left bottom menu)
 ]
 
 buttons = []

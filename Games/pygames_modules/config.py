@@ -9,34 +9,30 @@ DPI = 170
 GPIO_ENABLED = True
 
 GAMEPAD_BUTTON_MAP = {
-    "A":      0,   # D6
-    "B":      1,   # D9
-    "X":      2,   # D10
-    "Y":      3,   # D11
-    "UP":     4,   # RX
-    "DOWN":   5,   # MISO
-    "LEFT":   6,   # D4
-    "RIGHT":  7,   # TX
-    "L1":     8,   # SCK  (horny lavy trigger)
-    "R1":     9,   # SDA  (horny pravy trigger)
-    "L2":     10,  # D24  (dolny lavy trigger)
-    "R2":     11,  # SCL  (dolny pravy trigger)
-    "START":  12,  # D12
-    "HOME":   13,  # D13
-    "JOYSTICK_BUTTON_L": 14,  # MOSI (biely kabel)
-    "JOYSTICK_BUTTON_R": 15,  # D5
-    # D25 = button 17 (index 16) - zatial volny
+    "A":            0,   # GPIO08
+    "B":            1,   # GPIO09
+    "X":            2,   # GPIO10
+    "Y":            3,   # GPIO11
+    "UP":           4,   # GPIO01
+    "DOWN":         5,   # GPIO20
+    "LEFT":         6,   # GPIO06
+    "RIGHT":        7,   # GPIO00
+    "L1":           8,   # GPIO18 (upper left trigger)
+    "R1":           9,   # GPIO02 (upper right trigger)
+    "L2":           10,  # GPIO25 (lower left trigger)
+    "R2":           11,  # GPIO03 (lower right trigger)
+    "START":        12,  # GPIO12 (right upper menu button)
+    "HOME":         13,  # GPIO13 (left upper menu button)
+    "JOYSTICK_BUTTON_L": 14,  # GPIO24
+    "JOYSTICK_BUTTON_R": 15,  # GPIO07
+    "MENU_L":       16,  # GPIO19 (left bottom menu button)
 }
 
-# Mapovanie osi joysticku (pygame axis index)
-# Lavy joystick:  A1=VRx (X-os), A0=VRy (Y-os)
-# Pravy joystick: A2=VRx (X-os), A3=VRy (Y-os)
-# gp.move_joysticks(x=x1, y=y1, z=x2, r_z=y2)
 GAMEPAD_AXIS_MAP = {
-    "LEFT_X":  0,  # x   - lavy joystick X  (A1)
-    "LEFT_Y":  1,  # y   - lavy joystick Y  (A0)
-    "RIGHT_X": 2,  # z   - pravy joystick X (A2)
-    "RIGHT_Y": 3,  # r_z - pravy joystick Y (A3)
+    "LEFT_X":  0,  # x   - lavy joystick X  (GPIO29 / A3)
+    "LEFT_Y":  1,  # y   - lavy joystick Y  (GPIO28 / A2)
+    "RIGHT_X": 2,  # z   - pravy joystick X (GPIO27 / A1)
+    "RIGHT_Y": 3,  # r_z - pravy joystick Y (GPIO26 / A0)
 }
 
 # JOYSTICKY
@@ -67,6 +63,7 @@ KEYBOARD_SIPKY = {
     # menu
     "START": pygame.K_RETURN,
     "HOME": pygame.K_ESCAPE,
+    "MENU_L": pygame.K_TAB,
 
     # packy
     "L1": pygame.K_q,
@@ -107,6 +104,7 @@ KEYBOARD_WASD = {
     # menu
     "START": pygame.K_RETURN,
     "HOME": pygame.K_ESCAPE,
+    "MENU_L": pygame.K_TAB,
 
     # packy
     "L1": pygame.K_q,
