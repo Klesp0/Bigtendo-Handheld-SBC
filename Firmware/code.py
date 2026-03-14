@@ -12,68 +12,40 @@ gp = Gamepad(usb_hid.devices)
 print("Gamepad initialized successfully")
 
 # Setup Joysticks (Analog pins)
-# Left  joystick: A3=VRx (GPIO29), A2=VRy (GPIO28)
-# Right joystick: A1=VRx (GPIO27), A0=VRy (GPIO26)
-jx1 = analogio.AnalogIn(board.A3)   # Left  joystick X (GPIO29)
-jy1 = analogio.AnalogIn(board.A2)   # Left  joystick Y (GPIO28)
-jx2 = analogio.AnalogIn(board.A1)   # Right joystick X (GPIO27)
-jy2 = analogio.AnalogIn(board.A0)   # Right joystick Y (GPIO26)
+jx1 = analogio.AnalogIn(board.A0)
+jy1 = analogio.AnalogIn(board.A1)
+jx2 = analogio.AnalogIn(board.A2)
+jy2 = analogio.AnalogIn(board.A3)
 print("Joysticks initialized")
 
 # ===== MANUAL CALIBRATION OVERRIDE =====
-MANUAL_CENTER_X1 = None
-MANUAL_CENTER_Y1 = None
-MANUAL_CENTER_X2 = None
-MANUAL_CENTER_Y2 = None
+# If automatic calibration doesn't work well, you can manually set center values here
+# Set to None to use automatic calibration, or set specific values
+MANUAL_CENTER_X1 = None  # e.g., 32768
+MANUAL_CENTER_Y1 = None  # e.g., 33450
+MANUAL_CENTER_X2 = None  # e.g., 31890
+MANUAL_CENTER_Y2 = None  # e.g., 32100
 # ========================================
 
 # ===== JOYSTICK CONFIGURATION =====
-INVERT_JOY1_X = True
-INVERT_JOY1_Y = False
-INVERT_JOY2_X = False
-INVERT_JOY2_Y = False
+# Set these to True to invert axis direction if joystick is mounted rotated
+INVERT_JOY1_X = True  # Change to True if left joystick X is backwards
+INVERT_JOY1_Y = False  # Change to True if left joystick Y is backwards
+INVERT_JOY2_X = False  # Change to True if right joystick X is backwards
+INVERT_JOY2_Y = False  # Change to True if right joystick Y is backwards
 
-SWAP_JOY1_XY = True
-SWAP_JOY2_XY = False
+# Top joystick is rotated 90° clockwise, so swap its axes
+SWAP_JOY1_XY = True    # Top joystick is rotated
+SWAP_JOY2_XY = False   # Bottom joystick is straight
 # ===================================
 
-# Setup Buttons — order matches GAMEPAD_BUTTON_MAP indices in config.py
-# Index  Name                GPIO   Board pin
-#   0    A                   08     board.D8
-#   1    B                   09     board.D9
-#   2    X                   10     board.D10
-#   3    Y                   11     board.D11
-#   4    UP                  01     board.RX
-#   5    DOWN                20     board.MISO
-#   6    LEFT                06     board.D6
-#   7    RIGHT               00     board.TX
-#   8    L1 upper left       18     board.SCK
-#   9    R1 upper right      02     board.SDA
-#  10    L2 lower left       25     board.D25
-#  11    R2 lower right      03     board.SCL
-#  12    START               12     board.D12
-#  13    HOME                13     board.D13
-#  14    JOYSTICK_BUTTON_L   24     board.D24
-#  15    JOYSTICK_BUTTON_R   07     board.D7
-#  16    MENU_L              19     board.MOSI
+# Setup Buttons - All 17 buttons configured
 btn_pins = [
-    board.D8,    # Button 1  - A                (GPIO08)
-    board.D9,    # Button 2  - B                (GPIO09)
-    board.D10,   # Button 3  - X                (GPIO10)
-    board.D11,   # Button 4  - Y                (GPIO11)
-    board.RX,    # Button 5  - UP               (GPIO01)
-    board.MISO,  # Button 6  - DOWN             (GPIO20)
-    board.D6,    # Button 7  - LEFT             (GPIO06)
-    board.TX,    # Button 8  - RIGHT            (GPIO00)
-    board.SCK,   # Button 9  - L1 upper left    (GPIO18)
-    board.SDA,   # Button 10 - R1 upper right   (GPIO02)
-    board.D25,   # Button 11 - L2 lower left    (GPIO25)
-    board.SCL,   # Button 12 - R2 lower right   (GPIO03)
-    board.D12,   # Button 13 - START            (GPIO12)
-    board.D13,   # Button 14 - HOME             (GPIO13)
-    board.D24,   # Button 15 - JOYSTICK_BUTTON_L (GPIO24)
-    board.D7,    # Button 16 - JOYSTICK_BUTTON_R (GPIO07)
-    board.MOSI,  # Button 17 - MENU_L           (GPIO19)
+    board.D5, board.D6, board.D9, board.D10,       # Buttons 1-4
+    board.D11, board.D12, board.D13, board.D24,    # Buttons 5-8
+    board.D25, board.SCK, board.MOSI, board.MISO,  # Buttons 9-12
+    board.RX, board.TX, board.SDA, board.SCL,      # Buttons 13-16
+    board.D4,                                       # Button 17
 ]
 
 buttons = []
@@ -116,8 +88,8 @@ center_y2 //= 20
 
 print("\n" + "-"*60)
 print("CALIBRATION RESULTS:")
-print(f"  Joystick 1 (Left):  X = {center_x1:5}  Y = {center_y1:5}")
-print(f"  Joystick 2 (Right): X = {center_x2:5}  Y = {center_y2:5}")
+print(f"  Joystick 1 (Top):    X = {center_x1:5}  Y = {center_y1:5}")
+print(f"  Joystick 2 (Bottom): X = {center_x2:5}  Y = {center_y2:5}")
 print("-"*60)
 
 # Sanity check - warn if values look wrong
