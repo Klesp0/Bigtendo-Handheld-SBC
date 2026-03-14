@@ -8,40 +8,72 @@ DPI = 170
 
 GPIO_ENABLED = True
 
+# Button indices match btn_pins order in the original code.py:
+# board.D5, board.D6, board.D9, board.D10,
+# board.D11, board.D12, board.D13, board.D24,
+# board.D25, board.SCK, board.MOSI, board.MISO,
+# board.RX, board.TX, board.SDA, board.SCL,
+# board.D4
+#
+# Index  GPIO  Pin        Button
+#   0    05    D5         (unassigned - spare)
+#   1    06    D6         LEFT
+#   2    09    D9         B
+#   3    10    D10        X
+#   4    11    D11        Y
+#   5    12    D12        START
+#   6    13    D13        HOME
+#   7    24    D24        JOYSTICK_BUTTON_L
+#   8    25    D25        L2 lower left
+#   9    18    SCK        L1 upper left
+#  10    19    MOSI       MENU_L
+#  11    20    MISO       DOWN
+#  12    01    RX         UP
+#  13    00    TX         RIGHT
+#  14    02    SDA        R1 upper right
+#  15    03    SCL        R2 lower right
+#  16    04    D4         (unassigned - spare)
+#
+# NOTE: A (GPIO08) and JOYSTICK_BUTTON_R (GPIO07) are NOT wired
+# in the original code.py — add them if you extend btn_pins later.
+
 GAMEPAD_BUTTON_MAP = {
-    "A":            0,   # GPIO08
-    "B":            1,   # GPIO09
-    "X":            2,   # GPIO10
-    "Y":            3,   # GPIO11
-    "UP":           4,   # GPIO01
-    "DOWN":         5,   # GPIO20
-    "LEFT":         6,   # GPIO06
-    "RIGHT":        7,   # GPIO00
-    "L1":           8,   # GPIO18 (upper left trigger)
-    "R1":           9,   # GPIO02 (upper right trigger)
-    "L2":           10,  # GPIO25 (lower left trigger)
-    "R2":           11,  # GPIO03 (lower right trigger)
-    "START":        12,  # GPIO12 (right upper menu button)
-    "HOME":         13,  # GPIO13 (left upper menu button)
-    "JOYSTICK_BUTTON_L": 14,  # GPIO24
-    "JOYSTICK_BUTTON_R": 15,  # GPIO07
-    "MENU_L":       16,  # GPIO19 (left bottom menu button)
+    "B":                    1,   # GPIO09 / D9
+    "X":                    2,   # GPIO10 / D10
+    "Y":                    3,   # GPIO11 / D11
+    "LEFT":                 0,   # GPIO06 / D6   (index 1, but kept 0-based = 1 in gp.press_buttons)
+    "START":                4,   # GPIO12 / D12
+    "HOME":                 5,   # GPIO13 / D13
+    "JOYSTICK_BUTTON_L":    6,   # GPIO24 / D24
+    "L2":                   7,   # GPIO25 / D25
+    "L1":                   8,   # GPIO18 / SCK
+    "MENU_L":               9,   # GPIO19 / MOSI
+    "DOWN":                10,   # GPIO20 / MISO
+    "UP":                  11,   # GPIO01 / RX
+    "RIGHT":               12,   # GPIO00 / TX
+    "R1":                  13,   # GPIO02 / SDA
+    "R2":                  14,   # GPIO03 / SCL
 }
 
+# Axis indices match move_joysticks() call in original code.py:
+#   gp.move_joysticks(x=x1, y=y1, z=x2, r_z=y2)
+# where jx1=A0(GPIO26), jy1=A1(GPIO27), jx2=A2(GPIO29), jy2=A3(GPIO28)
+#
+# From wiring: GPIO26=A0=Right VRy, GPIO27=A1=Right VRx
+#              GPIO29=A2=Left  VRy, GPIO28=A3=Left  VRx  (best guess from pinout)
 GAMEPAD_AXIS_MAP = {
-    "LEFT_X":  0,  # x   - lavy joystick X  (GPIO29 / A3)
-    "LEFT_Y":  1,  # y   - lavy joystick Y  (GPIO28 / A2)
-    "RIGHT_X": 2,  # z   - pravy joystick X (GPIO27 / A1)
-    "RIGHT_Y": 3,  # r_z - pravy joystick Y (GPIO26 / A0)
+    "RIGHT_Y": 0,  # x   - A0 (GPIO26)
+    "RIGHT_X": 1,  # y   - A1 (GPIO27)
+    "LEFT_Y":  2,  # z   - A2 (GPIO29)
+    "LEFT_X":  3,  # r_z - A3 (GPIO28)
 }
 
 # JOYSTICKY
-# analogovy joystick 0-1023
 JOYSTICK_DEADZONE = 50
 JOYSTICK_MAX = 1023
 JOYSTICK_CENTER = 512
 JOYSTICK_MIN = 0
-JOYSTICK_SENSITIVITY = 1.0  # ked stihneme tak bude v nastaveniach
+JOYSTICK_SENSITIVITY = 1.0
 
 # KLAVESNICA
 WASD = False
