@@ -8,64 +8,72 @@ DPI = 170
 
 GPIO_ENABLED = True
 
-# Button indices match btn_pins order in the original code.py:
-# board.D5, board.D6, board.D9, board.D10,
-# board.D11, board.D12, board.D13, board.D24,
-# board.D25, board.SCK, board.MOSI, board.MISO,
-# board.RX, board.TX, board.SDA, board.SCL,
-# board.D4
+# =============================================================================
+# GAMEPAD BUTTON MAP
+# =============================================================================
+# Pygame joystick buttons are 0-indexed.
+# The Feather's code.py btn_pins list determines the HID button order:
+#   HID Button 1 = btn_pins[0] → pygame index 0
+#   HID Button 2 = btn_pins[1] → pygame index 1
+#   ... etc.
 #
-# Index  GPIO  Pin        Button
-#   0    05    D5         (unassigned - spare)
-#   1    06    D6         LEFT
-#   2    09    D9         B
-#   3    10    D10        X
-#   4    11    D11        Y
-#   5    12    D12        START
-#   6    13    D13        HOME
-#   7    24    D24        JOYSTICK_BUTTON_L
-#   8    25    D25        L2 lower left
-#   9    18    SCK        L1 upper left
-#  10    19    MOSI       MENU_L
-#  11    20    MISO       DOWN
-#  12    01    RX         UP
-#  13    00    TX         RIGHT
-#  14    02    SDA        R1 upper right
-#  15    03    SCL        R2 lower right
-#  16    04    D4         (unassigned - spare)
-#
-# NOTE: A (GPIO08) and JOYSTICK_BUTTON_R (GPIO07) are NOT wired
-# in the original code.py — add them if you extend btn_pins later.
+# btn_pins order in code.py:
+#   Index  GPIO  Physical
+#     0     06   Arrow Left
+#     1     08   A
+#     2     09   B
+#     3     10   X
+#     4     11   Y
+#     5     12   Menu Right Upper (START)
+#     6     13   Menu Left Upper (HOME)
+#     7     24   Left Joystick Button
+#     8     07   Right Joystick Button
+#     9     25   L2 (Left Lower Trigger)
+#    10     18   L1 (Left Upper Trigger)
+#    11     19   Menu Left Bottom (SELECT)
+#    12     20   Arrow Down
+#    13     01   Arrow Up
+#    14     00   Arrow Right
+#    15     02   R1 (Right Upper Trigger)
+#    16     03   R2 (Right Lower Trigger)
 
 GAMEPAD_BUTTON_MAP = {
-    "B":                    1,   # GPIO09 / D9
-    "X":                    2,   # GPIO10 / D10
-    "Y":                    3,   # GPIO11 / D11
-    "LEFT":                 0,   # GPIO06 / D6   (index 1, but kept 0-based = 1 in gp.press_buttons)
-    "START":                4,   # GPIO12 / D12
-    "HOME":                 5,   # GPIO13 / D13
-    "JOYSTICK_BUTTON_L":    6,   # GPIO24 / D24
-    "L2":                   7,   # GPIO25 / D25
-    "L1":                   8,   # GPIO18 / SCK
-    "MENU_L":               9,   # GPIO19 / MOSI
-    "DOWN":                10,   # GPIO20 / MISO
-    "UP":                  11,   # GPIO01 / RX
-    "RIGHT":               12,   # GPIO00 / TX
-    "R1":                  13,   # GPIO02 / SDA
-    "R2":                  14,   # GPIO03 / SCL
+    "LEFT":                 0,   # GPIO 06
+    "A":                    1,   # GPIO 08
+    "B":                    2,   # GPIO 09
+    "X":                    3,   # GPIO 10
+    "Y":                    4,   # GPIO 11
+    "START":                5,   # GPIO 12
+    "HOME":                 6,   # GPIO 13
+    "JOYSTICK_BUTTON_L":    7,   # GPIO 24
+    "JOYSTICK_BUTTON_R":    8,   # GPIO 07
+    "L2":                   9,   # GPIO 25
+    "L1":                  10,   # GPIO 18
+    "MENU_L":              11,   # GPIO 19
+    "DOWN":                12,   # GPIO 20
+    "UP":                  13,   # GPIO 01
+    "RIGHT":               14,   # GPIO 00
+    "R1":                  15,   # GPIO 02
+    "R2":                  16,   # GPIO 03
 }
 
-# Axis indices match move_joysticks() call in original code.py:
-#   gp.move_joysticks(x=x1, y=y1, z=x2, r_z=y2)
-# where jx1=A0(GPIO26), jy1=A1(GPIO27), jx2=A2(GPIO29), jy2=A3(GPIO28)
+# =============================================================================
+# GAMEPAD AXIS MAP
+# =============================================================================
+# Axes match move_joysticks(x=x1, y=y1, z=x2, r_z=y2) in code.py
+# After swap: x1=left X, y1=left Y, x2=right X, y2=right Y
 #
-# From wiring: GPIO26=A0=Right VRy, GPIO27=A1=Right VRx
-#              GPIO29=A2=Left  VRy, GPIO28=A3=Left  VRx  (best guess from pinout)
+# Pygame axis indices follow HID descriptor order:
+#   0 = x    (Joystick 0 X) → Left X  (after swap in firmware)
+#   1 = y    (Joystick 0 Y) → Left Y  (after swap in firmware)
+#   2 = z    (Joystick 1 X) → Right X
+#   3 = r_z  (Joystick 1 Y) → Right Y
+
 GAMEPAD_AXIS_MAP = {
-    "RIGHT_Y": 0,  # x   - A0 (GPIO26)
-    "RIGHT_X": 1,  # y   - A1 (GPIO27)
-    "LEFT_Y":  2,  # z   - A2 (GPIO29)
-    "LEFT_X":  3,  # r_z - A3 (GPIO28)
+    "LEFT_X":  0,   # x   axis
+    "LEFT_Y":  1,   # y   axis
+    "RIGHT_X": 2,   # z   axis
+    "RIGHT_Y": 3,   # r_z axis
 }
 
 # JOYSTICKY
@@ -197,7 +205,7 @@ GAMES = {
 }
 
 # Save data path
-SAVE_PATH = r"C:\Users\Lukáš\Desktop\Github\Programovanie\Bigtendo-Handheld-SBC\Games\saves"
+SAVE_PATH = r"C:\Users\Lukáš\Desktop\Github\Programovanie\Bigtendo-Handheld-SBC\Games\saves\highscores.json"
 HIGHSCORES_TIME_FILE = SAVE_PATH + "\highscores.json"
 SETTINGS_FILE = SAVE_PATH + "\settings"
 
