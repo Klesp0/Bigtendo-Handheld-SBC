@@ -217,7 +217,7 @@ class Breakout(Game):
     
     def handle_input(self):
         if self.game_state == 0:
-            if self.i.just_pressed("B"):
+            if self.i.just_pressed("A"):
                 self.game_state = 1
         
         elif self.game_state == 1:
@@ -233,7 +233,7 @@ class Breakout(Game):
                 self.player.x = max(0, min(self.player.x, self.width - self.player.width))
         
         elif self.game_state == 2:
-            if self.i.just_pressed("B"):
+            if self.i.just_pressed("A"):
                 self.__init__(fullscreen=self.screen.get_flags() & pygame.FULLSCREEN)
         
     def update(self):
