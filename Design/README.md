@@ -1,4 +1,4 @@
-\## Used software:
+## Used software:
 3D: Fusion 360
 
 Graphics: Photopea, Affinity,
