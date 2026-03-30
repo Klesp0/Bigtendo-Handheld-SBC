@@ -65,7 +65,7 @@ Each folder has its own README with more detail.
 
 ## How to Build
 
-Full instructions in **[Docs/build_guide.md](Docs/build_guide.md)** and **[Docs/wiring_guide.md](Docs/wiring_guide.md)**. Print the case, flash the Feather, wire everything, configure the Pi, assemble, and play.
+Full instructions in **[Docs/build_guide.md](Docs/build_guide)** and **[Docs/wiring_guide.md](Docs/wiring_guide)**. Print the case, flash the Feather, wire everything, configure the Pi, assemble, and play.
 
 ---
 
