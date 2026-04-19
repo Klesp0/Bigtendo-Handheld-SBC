@@ -35,7 +35,7 @@ SWAP_JOY1_XY = True
 SWAP_JOY2_XY = False
 # ===================================
 
-# Setup Buttons - 19 buttons configured
+# Setup Buttons - 17 buttons configured
 # Each button's position in this list = its HID button number (1-indexed)
 # So btn_pins[0] = HID Button 1, btn_pins[1] = HID Button 2, etc.
 #
