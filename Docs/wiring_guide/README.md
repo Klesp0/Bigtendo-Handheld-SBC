@@ -14,7 +14,7 @@ Solder all the jumper wires exactly like in the table below - the result should 
 
 
 
-!\[Feather wiring](/Media/photos/wiring/feather_wiring.jpg)
+!\[Feather wiring](/Media/photos/wiring/feather\_wiring.jpg)
 
 
 
@@ -150,7 +150,7 @@ Each joystick has 5 pins: VCC (3.3V), GND, VRx (analog X), VRy (analog Y), and S
 
 
 
-!\[Audio Schematic](/Media/images/audio_wiring.png)
+!\[Audio Schematic](/Media/images/audio\_wiring.png)
 
 
 
@@ -221,8 +221,4 @@ Each joystick has 5 pins: VCC (3.3V), GND, VRx (analog X), VRy (analog Y), and S
 | L+ / L- | Left 2030 cavity speaker (8Ω, 2W) |
 
 | R+ / R- | Right 2030 cavity speaker (8Ω, 2W) |
-
-
-
-
 
