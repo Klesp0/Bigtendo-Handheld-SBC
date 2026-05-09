@@ -1,4 +1,0 @@
->\[!Tip]
-
->Work in progress.
-

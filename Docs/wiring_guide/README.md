@@ -72,11 +72,11 @@ Each joystick has 5 pins: VCC (3.3V), GND, VRx (analog X), VRy (analog Y), and S
 
 ## Audio Schematic
 
-**Signal path:** Pi 5 → PCM5122 I2S DAC → PAM8403 Stereo Class D Amplifier → Speakers
+**Signal path:** Pi 5 -> PCM5122 I2S DAC -> PAM8403 Stereo Class D Amplifier -> Speakers
 
 ![Audio Schematic](/Media/images/audio_wiring.png)
 
-### Pi 5 → PCM5122 DAC
+### Pi 5 -> PCM5122 DAC
 
 | Pi 5 Pin | PCM5122 Pin | Wire Color | Purpose |
 |---|---|---|---|
@@ -97,14 +97,14 @@ Each joystick has 5 pins: VCC (3.3V), GND, VRx (analog X), VRy (analog Y), and S
 | GND | GND |
 | ROUT | R (right channel audio in) |
 
-### PAM8403 Amplifier — Power
+### PAM8403 Amplifier - Power
 
 | Source | PAM8403 Pin |
 |---|---|
 | Pi 5V | VCC 5V |
 | Pi GND | GND |
 
-### PAM8403 Amplifier → Speakers
+### PAM8403 Amplifier -> Speakers
 
 | PAM8403 Output | Speaker |
 |---|---|
