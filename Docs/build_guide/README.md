@@ -60,10 +60,10 @@ Download the [STL files](\Design\3D_Models\.stl).
 ## Step 3 — Flash the Feather RP2040
 
 1. Download the CircuitPython `.uf2` for the Feather RP2040 from [circuitpython.org](https://circuitpython.org/board/adafruit_feather_rp2040/)
+2. Plug the feather into your PC
 
 ![button](/Media/photos/wiring/highlighted.jpg)
 
-2. Plug the feather into your PC
 3. To enter the bootloader, hold down BOOTSEL (highlighted in `red` above), and while continuing to hold it (**`don't let go!`**), press and release the reset button (highlighted in `blue` above). Continue to hold the BOOT/BOOTSEL button until the `RPI-RP2` drive appears!
 4. Drag the `.uf2` onto it — the Feather reboots and `CIRCUITPY` appears
 5. Copy the firmware files onto `CIRCUITPY`:
@@ -85,7 +85,8 @@ The D13 LED should stay **`blinking`** after reboot. **blinking** = running. **S
 
 1. Download the [Raspberry Pi Imager](https://circuitpython.org/board/adafruit_feather_rp2040/) and flash Raspberry Pi OS (64-bit) onto your microSD card.
 2. put the cooler onto the raspberry 5 and screw the Raspberry onto the UPS shield
-3. ![ups](/Media/photos/wiring/x1201v1.1_hardware2.jpg)
+3. 
+![ups](/Media/photos/wiring/x1201v1.1_hardware2.jpg)
 
 >[!NOTE]
 >Don't inset the batteries just yet
