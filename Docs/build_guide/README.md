@@ -14,13 +14,13 @@ Everything you need is in [BOM.csv](BOM.csv) with purchase links. Before orderin
 
 Download the [STL files](\Design\3D_Models\.stl).
 
->**NOTE:**
+>[!NOTE]
 >If you have got a bambulab printer just import the [.3mf models](Design\3D_Models\.3mf_for_printing) into BambuStudio.
 
 ### Case settings
 - **Print both case halves with the flat exterior face down.**
 
->**NOTE:**
+>[!NOTE]
 >Upper part doesn't  need supports!
 
 | Setting | Value |
@@ -53,7 +53,7 @@ Download the [STL files](\Design\3D_Models\.stl).
 
 | | |
 |:---:|:---:|
-| ![case](Media/photos/wiring/print_case.jpg) | ![buttons](Media/photos/wiring/print_buttons.jpg) |
+| ![case](/Media/photos/wiring/print_case.jpg) | ![buttons](/Media/photos/wiring/print_buttons.jpg) |
 
 ---
 
@@ -61,7 +61,7 @@ Download the [STL files](\Design\3D_Models\.stl).
 
 1. Download the CircuitPython `.uf2` for the Feather RP2040 from [circuitpython.org](https://circuitpython.org/board/adafruit_feather_rp2040/)
 
-![button](Media/photos/wiring/highlighted.jpg)
+![button](/Media/photos/wiring/highlighted.jpg)
 
 2. Plug the feather into your PC
 3. To enter the bootloader, hold down BOOTSEL (highlighted in `red` above), and while continuing to hold it (**`don't let go!`**), press and release the reset button (highlighted in `blue` above). Continue to hold the BOOT/BOOTSEL button until the `RPI-RP2` drive appears!
@@ -85,9 +85,9 @@ The D13 LED should stay **`blinking`** after reboot. **blinking** = running. **S
 
 1. Download the [Raspberry Pi Imager](https://circuitpython.org/board/adafruit_feather_rp2040/) and flash Raspberry Pi OS (64-bit) onto your microSD card.
 2. put the cooler onto the raspberry 5 and screw the Raspberry onto the UPS shield
-3. ![ups](Media/photos/wiring/x1201v1.1_hardware2.jpg)
+3. ![ups](/Media/photos/wiring/x1201v1.1_hardware2.jpg)
 
->[!NOTE:]
+>[!NOTE]
 >Don't inset the batteries just yet
 
 4. Insert the card, connect your monitor, and plug the USB-C power cable into the UPS shield connector. 
@@ -175,7 +175,8 @@ The technique that worked for me:
 
 1. Tape the button caps tightly in place on the upper shell
 2. Put buttons into the caps
-![tape](Media/photos/wiring/tape.jpg)
+
+![tape](/Media/photos/wiring/tape.jpg)
 
 3. Place the upper shell onto the lower half so the buttons touch the perfboard
 4. Press the buttons down gently
@@ -189,7 +190,7 @@ Each joystick has 5 wires: VCC (3.3V), GND, VRx, VRy, and SW (click). Screw the 
 
 | | |
 |:--:|:--:|
-| ![joystick wiring](Media/photos/wiring/joystick_wiring.jpg) | ![joystick wiring](Media/photos/wiring/joystick_wiring1.jpg)
+| ![joystick wiring](/Media/photos/wiring/joystick_wiring.jpg) | ![joystick wiring](/Media/photos/wiring/joystick_wiring1.jpg)
 
 To verify, plug it into any PC and open [hardwaretester.com](https://hardwaretester.com/gamepad) - all 17 buttons and both joystick axes should register.
 
@@ -217,7 +218,7 @@ To verify, plug it into any PC and open [hardwaretester.com](https://hardwaretes
 > [!TIP]
 > Tape the back of the UPS shield with electric tape, just to be sage.
 
-![tape](Media/photos/wiring/tape_ups.jpg
+![tape](/Media/photos/wiring/tape_ups.jpg)
 
 ### Close it up
 
