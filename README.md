@@ -27,7 +27,7 @@ The console boots directly into EmulationStation, RetroPie's game browser. Use t
 | | |
 |:---:|:---:|
 | ![render](Media/photos/render.PNG) | ![cables](Media/photos/wiring/cables.jpg) |
-| ![top](Media/photos/case.jpg) | ![zine](Media/photos/wiring/zine.png) |
+| ![top](Media/photos/case.jpg) | ![buttons](Media/photos/wiring/print_buttons.jpg) |
 | ![console](Media/photos/wiring/mega2.jpg) | ![console](Media/photos/wiring/mega.jpg) |
 
 ---
@@ -79,3 +79,5 @@ Full instructions in **[Docs/build_guide.md](Docs/build_guide)** and **[Docs/wir
 ## License
 
 [GNU General Public License v3.0](LICENSE)
+
+![zine](Media/zine.PNG)
