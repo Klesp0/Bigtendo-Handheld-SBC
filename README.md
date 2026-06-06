@@ -78,4 +78,8 @@ Full instructions in **[Docs/build_guide.md](Docs/build_guide)** and **[Docs/wir
 
 ## License
 
+[GNU General Public License v3.0](LICENSE)
+
+---
+
 ![zine](Media/zine.png)
